@@ -25,10 +25,9 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { useToast } from '@/hooks/use-toast';
 import { Badge } from './ui/badge';
 import { Loader2 } from 'lucide-react';
-import { Separator } from './ui/separator';
+import { Separator } from '@/components/ui/separator';
 
 const formSchema = z.object({
   title: z.string().min(2, { message: 'El título debe tener al menos 2 caracteres.' }),
@@ -55,7 +54,6 @@ interface GameFormProps {
 
 export function GameForm({ isOpen, setIsOpen, game }: GameFormProps) {
   const { games, addGame, updateGame } = useContext(GameContext);
-  const { toast } = useToast();
 
   const allCategories = useMemo(() => {
     const categoriesSet = new Set(games.map((g) => g.category));
@@ -91,10 +89,8 @@ export function GameForm({ isOpen, setIsOpen, game }: GameFormProps) {
   const onSubmit = async (data: GameFormValues) => {
     if (game) {
       await updateGame({ id: game.id, ...data });
-      toast({ title: 'Juego actualizado', description: `"${data.title}" ha sido actualizado correctamente.` });
     } else {
       await addGame(data);
-      toast({ title: 'Juego añadido', description: `"${data.title}" ha sido añadido al catálogo.` });
     }
     setIsOpen(false);
   };
