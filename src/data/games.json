@@ -1,0 +1,62 @@
+[
+  {
+    "id": "1",
+    "title": "Cyberpunk 2077",
+    "description": "Una historia de acción y aventura en un mundo abierto ambientada en Night City, una megalópolis obsesionada con el poder, el glamour y la modificación corporal.",
+    "category": "Acción y Aventura",
+    "price": 350,
+    "imageUrl": "https://tse2.mm.bing.net/th/id/OIP.zyDJwcFwi-mea6hiiSWeMAHaEK?rs=1&pid=ImgDetMain&o=7&rm=3",
+    "pcRequirements": {
+      "os": "Windows 10 64-bit",
+      "processor": "Intel Core i7-6700 o AMD Ryzen 5 1600",
+      "memory": "12 GB RAM",
+      "graphics": "NVIDIA GeForce GTX 1060 6GB o AMD Radeon RX 580 8GB",
+      "storage": "70 GB de espacio disponible (SSD recomendado)"
+    }
+  },
+  {
+    "id": "2",
+    "title": "The Witcher 3: Wild Hunt",
+    "description": "Como Geralt de Rivia, un cazador de monstruos a sueldo, debes encontrar a la Niña de la Profecía, un arma viviente que puede alterar la forma del mundo.",
+    "category": "RPG de Acción",
+    "price": 350,
+    "imageUrl": "https://i.postimg.cc/v8fr33R7/images.webp",
+    "pcRequirements": {
+      "os": "Windows 7/8.1/10 64-bit",
+      "processor": "Intel CPU Core i5-2500K 3.3GHz / AMD CPU Phenom II X4 940",
+      "memory": "6 GB RAM",
+      "graphics": "Nvidia GPU GeForce GTX 660 / AMD GPU Radeon HD 7870",
+      "storage": "35 GB de espacio disponible"
+    }
+  },
+  {
+    "id": "3",
+    "title": "Red Dead Redemption 2",
+    "description": "La historia del forajido Arthur Morgan y la banda de Van der Linde mientras roban, luchan y se abren camino a través del vasto y accidentado corazón de América para sobrevivir.",
+    "category": "Acción y Aventura",
+    "price": 350,
+    "imageUrl": "https://i.postimg.cc/SR9bzHjv/OIP.webp",
+    "pcRequirements": {
+      "os": "Windows 10 - April 2018 Update (v1803)",
+      "processor": "Intel® Core™ i7-4770K / AMD Ryzen 5 1500X",
+      "memory": "12 GB RAM",
+      "graphics": "Nvidia GeForce GTX 1060 6GB / AMD Radeon RX 480 4GB",
+      "storage": "150 GB de espacio disponible"
+    }
+  },
+  {
+    "id": "4",
+    "title": "Elden Ring",
+    "description": "Un vasto mundo donde campos abiertos con una variedad de situaciones y enormes mazmorras con diseños complejos y tridimensionales se conectan sin problemas.",
+    "category": "Acción y Aventura",
+    "price": 350,
+    "imageUrl": "https://i.postimg.cc/8kRyj1CV/R.jpg",
+    "pcRequirements": {
+      "os": "Windows 10",
+      "processor": "INTEL CORE I5-8400 or AMD RYZEN 3 3300X",
+      "memory": "12 GB RAM",
+      "graphics": "NVIDIA GEFORCE GTX 1060 3 GB or AMD RADEON RX 580 4 GB",
+      "storage": "60 GB de espacio disponible"
+    }
+  }
+]
