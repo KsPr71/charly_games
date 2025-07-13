@@ -7,6 +7,9 @@ import { GameContext } from '@/context/game-provider';
 import { Skeleton } from '@/components/ui/skeleton';
 import { GameDetailsDialog } from '@/components/game-details-dialog';
 import type { Game } from '@/lib/types';
+import "../app/globals.css";
+
+
 import {
   Carousel,
   CarouselContent,
@@ -39,9 +42,9 @@ export default function Home() {
 
   return (
     <>
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8 bg-gray-100">
         <div className="text-center">
-            <h1 className="mb-4 text-4xl font-bold font-headline">Catálogo de Juegos</h1>
+            <h1 className="mb-4 text-4xl font-bold font-headline">CATÁLOGO DE JUEGOS</h1>
             <p className="mb-8 text-lg text-muted-foreground">
               Explora nuestra colección de juegos para PC.
             </p>
@@ -50,7 +53,7 @@ export default function Home() {
         {isLoading ? (
             <div className="mb-12">
                 <Skeleton className="h-8 w-48 mx-auto mb-6" />
-                <div className="flex space-x-6 overflow-hidden">
+                <div className="flex space-x-6 overflow-visible">
                     {Array.from({ length: 3 }).map((_, index) => (
                          <div key={index} className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 shrink-0">
                             <div className="flex flex-col space-y-3">
@@ -65,7 +68,7 @@ export default function Home() {
                 </div>
             </div>
         ) : recentGames.length > 0 && (
-          <div className="mb-12">
+          <div className="mb-12 flex flex-col items-center">
             <h2 className="mb-6 text-3xl font-bold text-center font-headline">Lo más reciente</h2>
             <Carousel
               opts={{
@@ -76,8 +79,8 @@ export default function Home() {
             >
               <CarouselContent>
                 {recentGames.map((game) => (
-                  <CarouselItem key={game.id} className="md:basis-1/2 lg:basis-1/3 xl:basis-1/4">
-                    <div className="p-1">
+                  <CarouselItem key={game.id} className="p-2 md:basis-1/2 lg:basis-1/3 xl:basis-1/4">
+                    <div className="p-3">
                       <GameCard game={game} onCardClick={() => setSelectedGame(game)} />
                     </div>
                   </CarouselItem>

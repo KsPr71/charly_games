@@ -23,8 +23,8 @@ export function CategoryFilters({
           className={cn(
             'cursor-pointer rounded-full px-4 py-2 text-sm font-medium transition-all hover:opacity-100',
             selectedCategory === category
-              ? 'bg-primary text-primary-foreground shadow-md'
-              : 'bg-secondary text-secondary-foreground opacity-80'
+              ? 'bg-blue-700 text-white shadow-md'
+              : 'bg-gray-300 text-secondary-foreground opacity-80'
           )}
           variant={selectedCategory === category ? 'default' : 'secondary'}
         >

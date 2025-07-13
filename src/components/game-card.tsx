@@ -25,7 +25,7 @@ export function GameCard({ game, onCardClick }: GameCardProps) {
 
   return (
     <Card 
-      className="flex h-full transform flex-col overflow-hidden rounded-lg shadow-lg transition-transform duration-300 hover:scale-105 hover:shadow-xl"
+      className="flex h-full transform flex-col overflow-hidden rounded-lg shadow-lg transition-transform duration-300 hover:scale-105 hover:shadow-xl bg-white relative z-0"
     >
       <div onClick={onCardClick} className="cursor-pointer">
         <CardHeader className="p-0">
@@ -42,7 +42,7 @@ export function GameCard({ game, onCardClick }: GameCardProps) {
         </CardHeader>
         
         <CardContent className="flex flex-grow flex-col p-4 pb-2">
-          <Badge variant="secondary" className="mb-2 w-fit">{game.category}</Badge>
+          <Badge variant="secondary" className="mb-2 w-fit bg-gray-200">{game.category}</Badge>
           <CardTitle className="mb-2 text-xl font-bold font-headline">{game.title}</CardTitle>
           <CardDescription className="mb-4 line-clamp-3 flex-grow text-sm">{game.description}</CardDescription>
         </CardContent>
@@ -50,10 +50,10 @@ export function GameCard({ game, onCardClick }: GameCardProps) {
 
       <CardFooter className="flex-col items-stretch p-4 pt-0">
          <Accordion type="single" collapsible onValueChange={(value) => setIsAccordionOpen(!!value)}>
-            <AccordionItem value="requirements" className="border-b-0">
+            <AccordionItem value="requirements" className="border-l border-r border-gray-300 bg-gray-100 rounded-md p-1">
                 <AccordionTrigger className="flex w-full justify-center rounded-md bg-secondary px-4 py-2 text-sm font-medium text-secondary-foreground hover:bg-secondary/80 hover:no-underline">
                      <span>Ver Requisitos</span>
-                     <ChevronDown className={cn("h-4 w-4 shrink-0 transition-transform duration-200", isAccordionOpen && "rotate-180")} />
+                     
                 </AccordionTrigger>
                 <AccordionContent className="pt-4 text-sm">
                    <ul className="space-y-3">
@@ -66,15 +66,19 @@ export function GameCard({ game, onCardClick }: GameCardProps) {
                 </AccordionContent>
             </AccordionItem>
         </Accordion>
-         <p className="mt-auto mb-4 mt-4 text-2xl font-semibold text-primary">
+         <p className="mt-auto mb-4 mt-4 text-2xl font-semibold text-blue-900 p-4">
             {game.price > 0 ? `$${game.price.toFixed(2)}` : 'Gratis'}
          </p>
-        <Button asChild className="w-full bg-accent text-accent-foreground hover:bg-accent/90" onClick={(e) => e.stopPropagation()}>
-          <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
-            <ShoppingCart className="mr-2 h-4 w-4" />
-            Pedir por WhatsApp
-          </a>
-        </Button>
+<Button
+  asChild
+  className="w-full px-4 py-2 rounded-lg font-semibold bg-fuchsia-700 text-white hover:bg-fuchsia-900 transition-colors duration-200 shadow-md hover:shadow-lg"
+  onClick={(e) => e.stopPropagation()}
+>
+  <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center">
+    <ShoppingCart className="mr-2 h-4 w-4" />
+    Pedir por WhatsApp
+  </a>
+</Button>
       </CardFooter>
     </Card>
   );

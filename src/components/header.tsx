@@ -58,9 +58,9 @@ export function Header() {
         )}
       >
         <Link href="/" className="mr-6 flex items-center space-x-2">
-            <Gamepad2 className="h-6 w-6 text-primary" />
+            <Gamepad2 className="h-6 w-6 text-fuchsia-800" />
             <span className="font-bold sm:inline-block">
-              <span className="text-primary">CHARLY</span><span className="text-accent">GAMES</span>
+              <span className="text-blue-900">CHARLY</span><span className="text-fuchsia-900">GAMES</span>
             </span>
         </Link>
         <div className="flex-1 md:hidden"></div>

@@ -3,6 +3,9 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+    --accent: 142 71% 45%; /* verde lima */
+  --accent-foreground: 0 0% 100%;
+  
 }
 
 @theme inline {
@@ -20,7 +23,26 @@
 }
 
 body {
+  body {
+  background-color: pink !important;
+}
+
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+@layer components {
+  .card {
+    @apply bg-[--color-background] text-[--color-foreground] font-sans p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow;
+  }
+}
+@layer components {
+  .card-base {
+    @apply rounded-lg border shadow-sm p-6;
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+  }
+}
+
