@@ -57,11 +57,11 @@ export function GameCard({ game, onCardClick }: GameCardProps) {
                 </AccordionTrigger>
                 <AccordionContent className="pt-4 text-sm">
                    <ul className="space-y-3">
-                    <li className="flex items-start gap-3"><Cpu size={20} className="mt-1 flex-shrink-0 text-primary" /> <div><strong>SO:</strong> {game.pcRequirements?.os || 'N/A'}</div></li>
-                    <li className="flex items-start gap-3"><Gamepad2 size={20} className="mt-1 flex-shrink-0 text-primary" /> <div><strong>Procesador:</strong> {game.pcRequirements?.processor || 'N/A'}</div></li>
-                    <li className="flex items-start gap-3"><MemoryStick size={20} className="mt-1 flex-shrink-0 text-primary" /> <div><strong>Memoria:</strong> {game.pcRequirements?.memory || 'N/A'}</div></li>
-                    <li className="flex items-start gap-3"><Monitor size={20} className="mt-1 flex-shrink-0 text-primary" /> <div><strong>Gráficos:</strong> {game.pcRequirements?.graphics || 'N/A'}</div></li>
-                    <li className="flex items-start gap-3"><HardDrive size={20} className="mt-1 flex-shrink-0 text-primary" /> <div><strong>Almacenamiento:</strong> {game.pcRequirements?.storage || 'N/A'}</div></li>
+                    <li className="flex items-start gap-3"><Cpu size={20} className="mt-1 flex-shrink-0 text-primary" /> <div><strong>SO:</strong> {game.os || 'N/A'}</div></li>
+                    <li className="flex items-start gap-3"><Gamepad2 size={20} className="mt-1 flex-shrink-0 text-primary" /> <div><strong>Procesador:</strong> {game.processor || 'N/A'}</div></li>
+                    <li className="flex items-start gap-3"><MemoryStick size={20} className="mt-1 flex-shrink-0 text-primary" /> <div><strong>Memoria:</strong> {game.memory || 'N/A'}</div></li>
+                    <li className="flex items-start gap-3"><Monitor size={20} className="mt-1 flex-shrink-0 text-primary" /> <div><strong>Gráficos:</strong> {game.graphics || 'N/A'}</div></li>
+                    <li className="flex items-start gap-3"><HardDrive size={20} className="mt-1 flex-shrink-0 text-primary" /> <div><strong>Almacenamiento:</strong> {game.storage || 'N/A'}</div></li>
                    </ul>
                 </AccordionContent>
             </AccordionItem>

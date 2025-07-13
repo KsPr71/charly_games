@@ -5,11 +5,11 @@ export interface Game {
   price: number;
   category: string;
   imageUrl: string;
-  pcRequirements: {
+ 
     os: string;
     processor: string;
     memory: string;
     graphics: string;
     storage: string;
-  };
+ 
 }

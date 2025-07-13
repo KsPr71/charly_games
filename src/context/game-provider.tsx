@@ -2,6 +2,8 @@
 
 import { createContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import type { Game } from '@/lib/types';
+import { supabase } from '@/lib/supabase';
+
 
 interface GameContextType {
   games: Game[];
@@ -42,6 +44,27 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     fetchGames();
   }, [fetchGames]);
+
+  useEffect(() => {
+  const subscription = supabase
+    .channel('games-listener')
+    .on(
+      'postgres_changes',
+      {
+        event: '*', // puedes usar 'INSERT', 'UPDATE', 'DELETE'
+        schema: 'public',
+        table: 'games',
+      },
+      () => {
+        fetchGames(); // vuelve a cargar la lista cuando hay cambios
+      }
+    )
+    .subscribe();
+
+  return () => {
+    supabase.removeChannel(subscription);
+  };
+}, [fetchGames]);
 
   const addGame = async (game: Omit<Game, 'id'>) => {
     try {
