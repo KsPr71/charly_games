@@ -1,16 +1,15 @@
-'use client';
+'use client'
 
-import { createContext, useState, useEffect, ReactNode, useCallback } from 'react';
-import type { Game } from '@/lib/types';
-import { supabase } from '@/lib/supabase';
-
+import { createContext, useState, useEffect, ReactNode, useCallback } from 'react'
+import type { Game } from '@/lib/types'
+import { supabase } from '@/lib/supabase'
 
 interface GameContextType {
-  games: Game[];
-  addGame: (game: Omit<Game, 'id'>) => Promise<void>;
-  updateGame: (game: Game) => Promise<void>;
-  deleteGame: (id: string) => Promise<void>;
-  isLoading: boolean;
+  games: Game[]
+  addGame: (game: Omit<Game, 'id'>) => Promise<void>
+  updateGame: (game: Game) => Promise<void>
+  deleteGame: (id: string) => Promise<void>
+  isLoading: boolean
 }
 
 export const GameContext = createContext<GameContextType>({
@@ -19,104 +18,110 @@ export const GameContext = createContext<GameContextType>({
   updateGame: async () => {},
   deleteGame: async () => {},
   isLoading: true,
-});
+})
 
 export const GameProvider = ({ children }: { children: ReactNode }) => {
-  const [games, setGames] = useState<Game[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [games, setGames] = useState<Game[]>([])
+  const [isLoading, setIsLoading] = useState(true)
 
   const fetchGames = useCallback(async () => {
-    setIsLoading(true);
+    setIsLoading(true)
     try {
-      const response = await fetch('/api/games');
-      if (!response.ok) {
-        throw new Error('Failed to fetch games');
-      }
-      const data = await response.json();
-      setGames(data);
+      const { data, error } = await supabase.from('games').select('*')
+      if (error) throw error
+      setGames(data || [])
     } catch (error) {
-      console.error(error);
+      console.error('Error al cargar juegos:', error)
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  }, []);
+  }, [])
 
   useEffect(() => {
-    fetchGames();
-  }, [fetchGames]);
+    fetchGames()
+  }, [fetchGames])
 
   useEffect(() => {
-  const subscription = supabase
-    .channel('games-listener')
-    .on(
-      'postgres_changes',
-      {
-        event: '*', // puedes usar 'INSERT', 'UPDATE', 'DELETE'
-        schema: 'public',
-        table: 'games',
-      },
-      () => {
-        fetchGames(); // vuelve a cargar la lista cuando hay cambios
-      }
-    )
-    .subscribe();
+    const subscription = supabase
+      .channel('games-listener')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'games' },
+        () => {
+          fetchGames()
+        }
+      )
+      .subscribe()
 
-  return () => {
-    supabase.removeChannel(subscription);
-  };
-}, [fetchGames]);
-
-  const addGame = async (game: Omit<Game, 'id'>) => {
-    try {
-      const response = await fetch('/api/games', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(game),
-      });
-      if (!response.ok) {
-        throw new Error('Failed to add game');
-      }
-      await fetchGames();
-    } catch (error) {
-      console.error(error);
+    return () => {
+      supabase.removeChannel(subscription)
     }
-  };
+  }, [fetchGames])
 
-  const updateGame = async (updatedGame: Game) => {
+const addGame = async (game: Omit<Game, 'id' | 'created_at'>) => {
+  console.log('Datos que se envían a Supabase:', game)
+
+  try {
+    const { data, error } = await supabase
+      .from('games')
+      .insert({
+        title: game.title,
+        description: game.description,
+        category: game.category,
+        price: game.price,
+        imageUrl: game.imageUrl,
+        os: game.os,  
+        processor: game.processor,
+        memory: game.memory,
+        graphics: game.graphics,
+        storage: game.storage,
+      
+      })
+      .select()
+    if (error) throw error
+    console.log('Juego agregado:', data)
+    setGames((prev) => [...prev, ...data]) // actualiza el estado local
+  } catch (error) {
+    console.error('Error al agregar juego:', error)
+  }
+}
+
+
+  const updateGame = async (game: Game) => {
     try {
-      const response = await fetch('/api/games', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updatedGame),
-      });
-      if (!response.ok) {
-        throw new Error('Failed to update game');
-      }
-      await fetchGames();
+      const { error } = await supabase
+        .from('games')
+        .update({
+        title: game.title,
+        description: game.description,
+        category: game.category,
+        price: game.price,
+        imageUrl: game.imageUrl,
+        os: game.os,  
+        processor: game.processor,
+        memory: game.memory,
+        graphics: game.graphics,
+        storage: game.storage,
+        })
+        .eq('id', game.id)
+      if (error) throw error
     } catch (error) {
-      console.error(error);
+      console.error('Error al actualizar juego:', error)
     }
-  };
+  }
 
   const deleteGame = async (id: string) => {
     try {
-        const response = await fetch('/api/games', {
-            method: 'DELETE',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id }),
-        });
-        if (!response.ok) {
-            throw new Error('Failed to delete game');
-        }
-        await fetchGames();
+      const { error } = await supabase.from('games').delete().eq('id', id)
+      if (error) throw error
     } catch (error) {
-        console.error(error);
+      console.error('Error al eliminar juego:', error)
     }
-  };
+  }
 
   return (
     <GameContext.Provider value={{ games, addGame, updateGame, deleteGame, isLoading }}>
       {children}
     </GameContext.Provider>
-  );
-};
+  )
+}

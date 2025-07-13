@@ -1,12 +1,11 @@
-'use client';
+"use client";
 
-import { useEffect, useState, useContext, useMemo } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
-import { GameContext } from '@/context/game-provider';
-import type { Game } from '@/lib/types';
-import { Button } from '@/components/ui/button';
+import { useEffect, useContext, useMemo, useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { GameContext } from "@/context/game-provider";
+import type { Game } from "@/lib/types";
 import {
   Dialog,
   DialogContent,
@@ -14,7 +13,7 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
-} from '@/components/ui/dialog';
+} from "@/components/ui/dialog";
 import {
   Form,
   FormControl,
@@ -22,28 +21,28 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Badge } from './ui/badge';
-import { Loader2 } from 'lucide-react';
-import { Separator } from '@/components/ui/separator';
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Loader2 } from "lucide-react";
+import { supabase } from "@/lib/supabase";
 
 const formSchema = z.object({
-  title: z.string().min(2, { message: 'El título debe tener al menos 2 caracteres.' }),
-  description: z.string().min(10, { message: 'La descripción debe tener al menos 10 caracteres.' }),
-  category: z.string().min(2, { message: 'La categoría es obligatoria.' }),
-  price: z.coerce.number().min(0, { message: 'El precio no puede ser negativo.' }),
-  imageUrl: z.string().url({ message: 'Por favor, introduce una URL de imagen válida.' }),
-  pcRequirements: z.object({
-    os: z.string().optional(),
-    processor: z.string().optional(),
-    memory: z.string().optional(),
-    graphics: z.string().optional(),
-    storage: z.string().optional(),
-  }),
+  title: z.string().min(2),
+  description: z.string().min(10),
+  category: z.string().min(2),
+  price: z.coerce.number().min(0),
+  imageUrl: z.string().url(),
+  os: z.string().optional(),
+  processor: z.string().optional(),
+  memory: z.string().optional(),
+  graphics: z.string().optional(),
+  storage: z.string().optional(),
 });
-
 type GameFormValues = z.infer<typeof formSchema>;
 
 interface GameFormProps {
@@ -54,28 +53,34 @@ interface GameFormProps {
 
 export function GameForm({ isOpen, setIsOpen, game }: GameFormProps) {
   const { games, addGame, updateGame } = useContext(GameContext);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (game?.imageUrl) {
+      setPreviewUrl(game.imageUrl);
+    }
+  }, [game]);
 
   const allCategories = useMemo(() => {
     const categoriesSet = new Set(games.map((g) => g.category));
     return Array.from(categoriesSet).sort();
   }, [games]);
 
-  const defaultValues = useMemo(() => {
-    return {
-      title: game?.title || '',
-      description: game?.description || '',
-      category: game?.category || '',
-      price: game?.price || 0,
-      imageUrl: game?.imageUrl || 'https://placehold.co/600x400.png',
-      pcRequirements: {
-        os: game?.pcRequirements?.os || '',
-        processor: game?.pcRequirements?.processor || '',
-        memory: game?.pcRequirements?.memory || '',
-        graphics: game?.pcRequirements?.graphics || '',
-        storage: game?.pcRequirements?.storage || '',
-      },
-    };
-  }, [game]);
+  const defaultValues: GameFormValues = useMemo(
+    () => ({
+      title: game?.title ?? "",
+      description: game?.description ?? "",
+      category: game?.category ?? "",
+      price: game?.price ?? 0,
+      imageUrl: game?.imageUrl ?? "",
+      os: game?.os ?? "",
+      processor: game?.processor ?? "",
+      memory: game?.memory ?? "",
+      graphics: game?.graphics ?? "",
+      storage: game?.storage ?? "",
+    }),
+    [game]
+  );
 
   const form = useForm<GameFormValues>({
     resolver: zodResolver(formSchema),
@@ -84,7 +89,31 @@ export function GameForm({ isOpen, setIsOpen, game }: GameFormProps) {
 
   useEffect(() => {
     form.reset(defaultValues);
-  }, [game, isOpen, form, defaultValues]);
+  }, [defaultValues]);
+
+  const handleImageUpload = async (file: File): Promise<string> => {
+    const fileExt = file.name.split(".").pop();
+    const fileName = `${Date.now()}.${fileExt}`;
+    const filePath = `${fileName}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from("game-images")
+      .upload(filePath, file, {
+        cacheControl: "3600",
+        upsert: false,
+      });
+
+    if (uploadError) throw new Error(uploadError.message);
+
+    const { data, error: urlError } = supabase.storage
+      .from("game-images")
+      .getPublicUrl(filePath);
+
+    if (urlError || !data?.publicUrl)
+      throw new Error("No se pudo obtener la URL pública");
+
+    return data.publicUrl;
+  };
 
   const onSubmit = async (data: GameFormValues) => {
     if (game) {
@@ -97,178 +126,212 @@ export function GameForm({ isOpen, setIsOpen, game }: GameFormProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent className="sm:max-w-[525px] max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-[525px] max-h-[90vh] overflow-y-auto bg-background px-6 py-4 rounded-xl shadow-lg border">
         <DialogHeader>
-          <DialogTitle>{game ? 'Editar Juego' : 'Añadir Nuevo Juego'}</DialogTitle>
-          <DialogDescription>
-            {game ? 'Actualiza los detalles del juego.' : 'Rellena los detalles del nuevo juego.'}
+          <DialogTitle className="text-xl font-bold">
+            {game ? "Editar Juego" : "Añadir Nuevo Juego"}
+          </DialogTitle>
+          <DialogDescription className="text-muted-foreground">
+            {game
+              ? "Actualiza los detalles del juego."
+              : "Rellena los detalles del nuevo juego."}
           </DialogDescription>
         </DialogHeader>
+
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="title"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Título</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Ej: Elden Ring" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Descripción</FormLabel>
-                  <FormControl>
-                    <Textarea placeholder="Describe el juego..." {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            
-            <FormField
-              control={form.control}
-              name="category"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Categoría</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Escribe o selecciona una categoría" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            
-            {(allCategories.length > 0) && (
-              <div className="space-y-2 pt-1">
-                <FormLabel className="text-sm text-muted-foreground">Categorías existentes:</FormLabel>
-                <div className="flex flex-wrap gap-2">
-                  {allCategories.map((category) => (
-                      <Badge 
-                          key={category} 
-                          variant={form.watch('category') === category ? 'default' : 'secondary'}
-                          className="cursor-pointer"
-                          onClick={() => form.setValue('category', category, { shouldValidate: true })}
-                      >
+            <Tabs defaultValue="general" className="w-full space-y-4">
+              <TabsList className="grid grid-cols-2 w-full">
+                <TabsTrigger value="general">Información General</TabsTrigger>
+                <TabsTrigger value="tech">Requisitos Técnicos</TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="general" className="space-y-4">
+                <FormField
+                  control={form.control}
+                  name="title"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Título</FormLabel>
+                      <FormControl>
+                        <Input className="rounded-md" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="description"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Descripción</FormLabel>
+                      <FormControl>
+                        <Textarea className="rounded-md" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="category"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Categoría</FormLabel>
+                      <FormControl>
+                        <Input className="rounded-md" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {allCategories.length > 0 && (
+                  <div className="space-y-2 pt-1">
+                    <FormLabel className="text-sm text-muted-foreground">
+                      Categorías existentes:
+                    </FormLabel>
+                    <div className="flex flex-wrap gap-2">
+                      {allCategories.map((category) => (
+                        <Badge
+                          key={category}
+                          variant={
+                            form.watch("category") === category
+                              ? "default"
+                              : "secondary"
+                          }
+                          className="cursor-pointer transition hover:scale-105"
+                          onClick={() =>
+                            form.setValue("category", category, {
+                              shouldValidate: true,
+                            })
+                          }
+                        >
                           {category}
-                      </Badge>
-                  ))}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="price"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Precio</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            step="0.01"
+                            className="rounded-md"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="imageUrl"
+                    render={() => (
+                      <FormItem>
+                        <FormLabel>Imagen del juego</FormLabel>
+                        <FormControl>
+                          <div className="space-y-2">
+                            {previewUrl && (
+                              <img
+                                src={previewUrl}
+                                alt="Vista previa"
+                                className="rounded-md border w-full object-cover max-h-48"
+                              />
+                            )}
+                            <Input
+                              type="file"
+                              accept="image/*"
+                              onChange={async (e) => {
+                                const file = e.target.files?.[0];
+                                if (!file) return;
+                                if (file.size > 5_000_000) {
+                                  console.error("Archivo muy pesado (>5MB)");
+                                  return;
+                                }
+                                try {
+                                  const publicUrl = await handleImageUpload(
+                                    file
+                                  );
+                                  form.setValue("imageUrl", publicUrl, {
+                                    shouldValidate: true,
+                                  });
+                                  setPreviewUrl(publicUrl);
+                                } catch (error) {
+                                  console.error(
+                                    "Error al subir la imagen:",
+                                    error
+                                  );
+                                }
+                              }}
+                            />
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                 </div>
-              </div>
-            )}
-            
-            <div className="grid grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="price"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Precio</FormLabel>
-                    <FormControl>
-                      <Input type="number" step="0.01" placeholder="Ej: 59.99" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
+              </TabsContent>
+
+              <TabsContent value="tech" className="space-y-4">
+                {["os", "processor", "memory", "graphics", "storage"].map(
+                  (fieldName) => (
+                    <FormField
+                      key={fieldName}
+                      control={form.control}
+                      name={fieldName as keyof GameFormValues}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>
+                            {fieldName.charAt(0).toUpperCase() +
+                              fieldName.slice(1)}
+                          </FormLabel>
+                          <FormControl>
+                            <Input className="rounded-md" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  )
                 )}
-              />
-               <FormField
-                control={form.control}
-                name="imageUrl"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>URL de la Imagen</FormLabel>
-                    <FormControl>
-                      <Input placeholder="https://..." {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+              </TabsContent>
+            </Tabs>
 
-            <Separator />
-            <h4 className="font-semibold text-foreground">Requisitos de PC</h4>
-
-             <FormField
-              control={form.control}
-              name="pcRequirements.os"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Sistema Operativo</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Ej: Windows 10 64-bit" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-             <FormField
-              control={form.control}
-              name="pcRequirements.processor"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Procesador</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Ej: Intel Core i7-6700" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-             <FormField
-              control={form.control}
-              name="pcRequirements.memory"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Memoria</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Ej: 16 GB RAM" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-             <FormField
-              control={form.control}
-              name="pcRequirements.graphics"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Gráficos</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Ej: NVIDIA GeForce GTX 1060" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-             <FormField
-              control={form.control}
-              name="pcRequirements.storage"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Almacenamiento</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Ej: 70 GB de espacio disponible" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <DialogFooter className="pt-4">
-              <Button type="button" variant="ghost" onClick={() => setIsOpen(false)}>Cancelar</Button>
-              <Button type="submit" disabled={form.formState.isSubmitting}>
-                {form.formState.isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {game ? 'Guardar Cambios' : 'Añadir Juego'}
+            <DialogFooter className="pt-4 flex justify-between">
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => setIsOpen(false)}
+              >
+                Cancelar
               </Button>
+              <Button
+  type="submit"
+  disabled={form.formState.isSubmitting}
+  className={`flex items-center gap-2 transition ${
+    form.formState.isSubmitting
+      ? 'animate-pulse bg-[#e63946] text-white'
+      : 'bg-[#1d3557] text-white hover:opacity-80'
+  }`}
+>
+  {form.formState.isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
+  {game ? "Guardar Cambios" : "Añadir Juego"}
+</Button>
             </DialogFooter>
           </form>
         </Form>
