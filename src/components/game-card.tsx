@@ -30,7 +30,7 @@ export function GameCard({ game, onCardClick }: GameCardProps) {
       <div onClick={onCardClick} className="cursor-pointer">
         <CardHeader className="p-0">
           <div className="relative h-48 w-full">
-<img
+<Image
   src={game.imageUrl}
   alt={game.title}
   width={600}
