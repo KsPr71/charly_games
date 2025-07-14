@@ -30,11 +30,11 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Loader2 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
-import {osOptions} from '../data/os-options';
-import { processorOptions } from '../data/processor-options';
-import { memoryOptions} from '../data/memory-options';
-import { graphicsOptions } from '../data/graphics-options'
-import { storageOptions} from '../data/storage-options'
+import { osOptions } from "../data/os-options";
+import { processorOptions } from "../data/processor-options";
+import { memoryOptions } from "../data/memory-options";
+import { graphicsOptions } from "../data/graphics-options";
+import { storageOptions } from "../data/storage-options";
 import { categoryOptions } from "../data/category-options";
 
 const formSchema = z.object({
@@ -131,12 +131,12 @@ export function GameForm({ isOpen, setIsOpen, game }: GameFormProps) {
   };
 
   const fieldLabels: Record<string, string> = {
-  os: "Sistema Operativo",
-  processor: "Procesador",
-  memory: "Memoria RAM",
-  graphics: "Tarjeta Gráfica",
-  storage: "Almacenamiento",
-};
+    os: "Sistema Operativo",
+    processor: "Procesador",
+    memory: "Memoria RAM",
+    graphics: "Tarjeta Gráfica",
+    storage: "Almacenamiento",
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -156,12 +156,18 @@ export function GameForm({ isOpen, setIsOpen, game }: GameFormProps) {
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <Tabs defaultValue="general" className="w-full space-y-4">
               <TabsList className="grid grid-cols-2 w-full">
-                <TabsTrigger value="general" 
-                className="px-4 py-2 rounded-md transition-colors duration-300 data-[state=active]:bg-fuchsia-600 data-[state=active]:text-white bg-gray-200 text-gray-700"
-                >Información General</TabsTrigger>
-                <TabsTrigger value="tech"
-                className="px-4 py-2 rounded-md transition-colors duration-300 data-[state=active]:bg-fuchsia-600 data-[state=active]:text-white bg-gray-200 text-gray-700"
-                >Requisitos Técnicos</TabsTrigger>
+                <TabsTrigger
+                  value="general"
+                  className="px-4 py-2 rounded-md transition-colors duration-300 data-[state=active]:bg-fuchsia-600 data-[state=active]:text-white bg-gray-200 text-gray-700"
+                >
+                  Información General
+                </TabsTrigger>
+                <TabsTrigger
+                  value="tech"
+                  className="px-4 py-2 rounded-md transition-colors duration-300 data-[state=active]:bg-fuchsia-600 data-[state=active]:text-white bg-gray-200 text-gray-700"
+                >
+                  Requisitos Técnicos
+                </TabsTrigger>
               </TabsList>
 
               <TabsContent value="general" className="space-y-4">
@@ -193,29 +199,29 @@ export function GameForm({ isOpen, setIsOpen, game }: GameFormProps) {
                   )}
                 />
 
-<FormField
-  control={form.control}
-  name="category"
-  render={({ field }) => (
-    <FormItem>
-      <FormLabel>Categoría</FormLabel>
-      <FormControl>
-        <select
-          {...field}
-          className="w-full rounded-md border border-gray-300 bg-white p-2 text-sm shadow-sm"
-        >
-          <option value="">Seleccione una categoría</option>
-          {categoryOptions.map((cat) => (
-            <option key={cat} value={cat}>
-              {cat}
-            </option>
-          ))}
-        </select>
-      </FormControl>
-      <FormMessage />
-    </FormItem>
-  )}
-/>
+                <FormField
+                  control={form.control}
+                  name="category"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Categoría</FormLabel>
+                      <FormControl>
+                        <select
+                          {...field}
+                          className="w-full rounded-md border border-gray-300 bg-white p-2 text-sm shadow-sm"
+                        >
+                          <option value="">Seleccione una categoría</option>
+                          {categoryOptions.map((cat) => (
+                            <option key={cat} value={cat}>
+                              {cat}
+                            </option>
+                          ))}
+                        </select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
                 {allCategories.length > 0 && (
                   <div className="space-y-2 pt-1">
@@ -315,52 +321,56 @@ export function GameForm({ isOpen, setIsOpen, game }: GameFormProps) {
                 </div>
               </TabsContent>
 
+              <TabsContent value="tech" className="space-y-4">
+                {["os", "processor", "memory", "graphics", "storage"].map(
+                  (fieldName) => {
+                    const optionsMap = {
+                      os: osOptions,
+                      processor: processorOptions,
+                      memory: memoryOptions,
+                      graphics: graphicsOptions,
+                      storage: storageOptions,
+                    };
 
-<TabsContent value="tech" className="space-y-4">
-  {["os", "processor", "memory", "graphics", "storage"].map((fieldName) => {
-    const optionsMap = {
-      os: osOptions,
-      processor: processorOptions,
-      memory: memoryOptions,
-      graphics: graphicsOptions,
-      storage: storageOptions,
-    };
+                    const options =
+                      optionsMap[fieldName as keyof typeof optionsMap];
+                    const label = fieldLabels[fieldName];
 
-    const options = optionsMap[fieldName as keyof typeof optionsMap];
-    const label = fieldLabels[fieldName];
-
-    return (
-      <FormField
-        key={fieldName}
-        control={form.control}
-        name={fieldName as keyof GameFormValues}
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>{label}</FormLabel>
-            <FormControl>
-              {options ? (
-                <select
-                  {...field}
-                  className="w-full rounded-md border border-gray-300 bg-white p-2 text-sm shadow-sm"
-                >
-                  <option value="">Seleccione una opción</option>
-                  {options.map((opt) => (
-                    <option key={opt} value={opt}>
-                      {opt}
-                    </option>
-                  ))}
-                </select>
-              ) : (
-                <Input className="rounded-md" {...field} />
-              )}
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-    );
-  })}
-</TabsContent>
+                    return (
+                      <FormField
+                        key={fieldName}
+                        control={form.control}
+                        name={fieldName as keyof GameFormValues}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>{label}</FormLabel>
+                            <FormControl>
+                              {options ? (
+                                <select
+                                  {...field}
+                                  className="w-full rounded-md border border-gray-300 bg-white p-2 text-sm shadow-sm"
+                                >
+                                  <option value="">
+                                    Seleccione una opción
+                                  </option>
+                                  {options.map((opt) => (
+                                    <option key={opt} value={opt}>
+                                      {opt}
+                                    </option>
+                                  ))}
+                                </select>
+                              ) : (
+                                <Input className="rounded-md" {...field} />
+                              )}
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    );
+                  }
+                )}
+              </TabsContent>
             </Tabs>
 
             <DialogFooter className="pt-4 flex justify-between">
@@ -372,17 +382,19 @@ export function GameForm({ isOpen, setIsOpen, game }: GameFormProps) {
                 Cancelar
               </Button>
               <Button
-  type="submit"
-  disabled={form.formState.isSubmitting}
-  className={`flex items-center gap-2 transition ${
-    form.formState.isSubmitting
-      ? 'animate-pulse bg-[#e63946] text-white'
-      : 'bg-[#1d3557] text-white hover:opacity-80'
-  }`}
->
-  {form.formState.isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
-  {game ? "Guardar Cambios" : "Añadir Juego"}
-</Button>
+                type="submit"
+                disabled={form.formState.isSubmitting}
+                className={`flex items-center gap-2 transition ${
+                  form.formState.isSubmitting
+                    ? "animate-pulse bg-[#e63946] text-white"
+                    : "bg-[#1d3557] text-white hover:opacity-80"
+                }`}
+              >
+                {form.formState.isSubmitting && (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                )}
+                {game ? "Guardar Cambios" : "Añadir Juego"}
+              </Button>
             </DialogFooter>
           </form>
         </Form>

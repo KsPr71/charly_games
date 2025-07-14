@@ -138,6 +138,7 @@ function AdminPanel() {
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [selectedGame, setSelectedGame] = useState<Game | undefined>(undefined);
   const [gameToDelete, setGameToDelete] = useState<Game | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const handleAddNew = () => {
     setSelectedGame(undefined);
@@ -162,24 +163,40 @@ function AdminPanel() {
     setIsAlertOpen(false);
   };
 
+  const filteredGames = games.filter((game) =>
+    game.title.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <>
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-6 flex flex-wrap items-center justify-between bg-blue-100 p-3 gap-2 shadow-sm rounded-lg">
         <h1 className="text-3xl font-bold font-headline">Panel de Administración</h1>
-        <Button onClick={handleAddNew}>
-          <PlusCircle className="mr-2 h-4 w-4" />
-          Añadir Nuevo Juego
-        </Button>
+        <div className="flex gap-2 items-center">
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Buscar por título..."
+            className="rounded-md border border-gray-300 p-2 text-sm shadow-sm bg-white"
+          />
+          <Button 
+            className="bg-white text-blue-500 hover:bg-blue-100"
+            onClick={handleAddNew}
+          >
+            <PlusCircle className="mr-2 h-4 w-4" />
+            Añadir Nuevo Juego
+          </Button>
+        </div>
       </div>
 
       <div className="overflow-hidden rounded-lg border shadow-sm">
         <Table>
-          <TableHeader>
+          <TableHeader className='bg-fuchsia-800'>
             <TableRow>
-              <TableHead>Título</TableHead>
-              <TableHead>Categoría</TableHead>
-              <TableHead>Precio</TableHead>
-              <TableHead className="text-right">Acciones</TableHead>
+              <TableHead className='font-bold text-white'>Título</TableHead>
+              <TableHead className='font-bold text-white'>Categoría</TableHead>
+              <TableHead className='font-bold text-white'>Precio</TableHead>
+              <TableHead className="text-right font-bold text-white">Acciones</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -189,36 +206,43 @@ function AdminPanel() {
                   <TableCell><Skeleton className="h-5 w-32" /></TableCell>
                   <TableCell><Skeleton className="h-5 w-24" /></TableCell>
                   <TableCell><Skeleton className="h-5 w-16" /></TableCell>
-                  <TableCell className="text-right"><Skeleton className="h-8 w-8 ml-auto" /></TableCell>
+                  <TableCell className="text-right">
+                    <Skeleton className="h-8 w-8 ml-auto" />
+                  </TableCell>
                 </TableRow>
               ))
-            ) : games.map((game) => (
-              <TableRow key={game.id}>
-                <TableCell className="font-medium">{game.title}</TableCell>
-                <TableCell>{game.category}</TableCell>
-                <TableCell>{game.price > 0 ? `$${game.price.toFixed(2)}` : 'Gratis'}</TableCell>
-                <TableCell className="text-right">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" className="h-8 w-8 p-0">
-                        <span className="sr-only">Abrir menú</span>
-                        <MoreHorizontal className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem onClick={() => handleEdit(game)}>
-                        <Edit className="mr-2 h-4 w-4" />
-                        <span>Editar</span>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => handleDeleteClick(game)} className="text-red-600">
-                        <Trash2 className="mr-2 h-4 w-4" />
-                        <span>Eliminar</span>
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </TableCell>
-              </TableRow>
-            ))}
+            ) : (
+              filteredGames.map((game) => (
+                <TableRow key={game.id}>
+                  <TableCell className="font-medium">{game.title}</TableCell>
+                  <TableCell>{game.category}</TableCell>
+                  <TableCell>{game.price > 0 ? `$${game.price.toFixed(2)}` : 'Gratis'}</TableCell>
+                  <TableCell className="text-right">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="h-8 w-8 p-0">
+                          <span className="sr-only">Abrir menú</span>
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className='bg-gray-100 shadow-xl border-gray-300'>
+                        <DropdownMenuItem onClick={() => handleEdit(game)}>
+                          <Edit className="mr-2 h-4 w-4" />
+                          <span>Editar</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => handleDeleteClick(game)}
+                          className="text-red-600"
+                        >
+                          <Trash2 className="mr-2 h-4 w-4" />
+                          <span>Eliminar</span>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
           </TableBody>
         </Table>
       </div>
@@ -238,13 +262,15 @@ function AdminPanel() {
           <AlertDialogHeader>
             <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
             <AlertDialogDescription>
-              Esta acción no se puede deshacer. Esto eliminará permanentemente el juego
-              "{gameToDelete?.title}" de tu catálogo.
+              Esta acción no se puede deshacer. Esto eliminará permanentemente el juego "{gameToDelete?.title}" de tu catálogo.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDeleteConfirm} className="bg-destructive hover:bg-destructive/90">
+            <AlertDialogAction
+              onClick={handleDeleteConfirm}
+              className="bg-destructive hover:bg-destructive/90"
+            >
               Eliminar
             </AlertDialogAction>
           </AlertDialogFooter>
@@ -253,6 +279,7 @@ function AdminPanel() {
     </>
   );
 }
+
 
 function PasswordPrompt({ onCorrectPassword }: { onCorrectPassword: () => void }) {
   const [password, setPassword] = useState('');
