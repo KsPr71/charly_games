@@ -30,14 +30,13 @@ export function GameCard({ game, onCardClick }: GameCardProps) {
       <div onClick={onCardClick} className="cursor-pointer">
         <CardHeader className="p-0">
           <div className="relative h-48 w-full">
-            <img
-              src={game.imageUrl}
-              alt={`Cover art for ${game.title}`}
-              
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              style={{ objectFit: 'cover' }}
-              data-ai-hint={`${game.category.toLowerCase()} game`}
-            />
+<Image
+  src={game.imageUrl}
+  alt={game.title}
+  width={600}
+  height={400}
+  className="rounded-md object-cover"
+/>
           </div>
         </CardHeader>
         
