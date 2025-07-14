@@ -29,15 +29,14 @@ export function GameCard({ game, onCardClick }: GameCardProps) {
     >
       <div onClick={onCardClick} className="cursor-pointer">
         <CardHeader className="p-0">
-          <div className="relative h-48 w-full">
-<Image
-  src={game.imageUrl}
-  alt={game.title}
-  width={600}
-  height={400}
-  className="rounded-md object-cover"
-/>
-          </div>
+<div style={{ position: 'relative', width: '600px', height: '400px' }}>
+  <Image
+    src={game.imageUrl}
+    alt={game.title}
+    fill
+    className="rounded-md object-cover"
+  />
+</div>
         </CardHeader>
         
         <CardContent className="flex flex-grow flex-col p-4 pb-2">
