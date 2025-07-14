@@ -22,6 +22,7 @@ export function GameCard({ game, onCardClick }: GameCardProps) {
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${message}`;
 
   const [isAccordionOpen, setIsAccordionOpen] = useState(false);
+   const [showFull, setShowFull] = useState(false);
 
   return (
     <Card 
@@ -43,7 +44,11 @@ export function GameCard({ game, onCardClick }: GameCardProps) {
         <CardContent className="flex flex-grow flex-col p-4 pb-2">
           <Badge variant="secondary" className="mb-2 w-fit bg-gray-200">{game.category}</Badge>
           <CardTitle className="mb-2 text-xl font-bold font-headline">{game.title}</CardTitle>
-          <CardDescription className="mb-4 line-clamp-3 flex-grow text-sm">{game.description}</CardDescription>
+                  <CardDescription
+          className={`mb-4 text-sm transition-all duration-300 ease-in-out ${
+            showFull ? "" : "line-clamp-4"
+          }`}
+        >{game.description}</CardDescription>
         </CardContent>
       </div>
 
