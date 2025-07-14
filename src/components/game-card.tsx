@@ -42,7 +42,7 @@ export function GameCard({ game, onCardClick }: GameCardProps) {
         </CardHeader>
         
         <CardContent className="flex flex-grow flex-col p-4 pb-2">
-          <Badge variant="secondary" className="mb-2 w-fit bg-gray-200">{game.category}</Badge>
+          <Badge variant="secondary" className="mb-2 w-fit bg-gray-200 ml-auto shadow-sm border border-gray-400">{game.category}</Badge>
           <CardTitle className="mb-2 text-xl font-bold font-headline">{game.title}</CardTitle>
                   <CardDescription
           className={`mb-4 text-sm transition-all duration-300 ease-in-out ${

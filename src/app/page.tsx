@@ -41,7 +41,7 @@ export default function Home() {
   }, [games, selectedCategory]);
 
   return (
-    <>
+    <div className="min-h-screen bg-gray-100">
       <div className="container mx-auto px-4 py-8 bg-gray-100">
         <div className="text-center">
             <h1 className="mb-4 text-4xl font-bold font-headline">CATÁLOGO DE JUEGOS</h1>
@@ -135,6 +135,6 @@ export default function Home() {
           }
         }}
       />
-    </>
+    </div>
   );
 }
