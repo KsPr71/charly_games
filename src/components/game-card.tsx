@@ -37,11 +37,6 @@ export function GameCard({ game, onCardClick }: GameCardProps) {
   height={400}
   className="rounded-md object-cover"
 />
-<img
-  src="https://ticudnzjewvqmrgagntg.supabase.co/storage/v1/object/public/game-images/1752448072732.webp"
-  alt="Prueba de imagen"
-  className="rounded-md w-full"
-/>
           </div>
         </CardHeader>
         
