@@ -29,14 +29,13 @@ export function GameCard({ game, onCardClick }: GameCardProps) {
     >
       <div onClick={onCardClick} className="cursor-pointer">
         <CardHeader className="p-0">
-<div style={{ position: 'relative', width: '600px', height: '400px' }}>
+<div className="relative w-full aspect-[3/2] rounded-t-lg overflow-hidden hover:scale-[1.02] hover:shadow-lg transition">
   <Image
     src={game.imageUrl}
-    alt={game.title}
-      width={600}
-  height={400}
+    alt={`Cover art for ${game.title}`}
     fill
-    className="rounded-md object-cover"
+    className="object-cover"
+    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
   />
 </div>
         </CardHeader>
