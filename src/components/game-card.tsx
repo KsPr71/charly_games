@@ -33,6 +33,8 @@ export function GameCard({ game, onCardClick }: GameCardProps) {
   <Image
     src={game.imageUrl}
     alt={game.title}
+      width={600}
+  height={400}
     fill
     className="rounded-md object-cover"
   />
