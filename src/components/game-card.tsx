@@ -59,7 +59,7 @@ export function GameCard({ game, onCardClick }: GameCardProps) {
                      <span>Ver Requisitos</span>
                      
                 </AccordionTrigger>
-                <AccordionContent className="pt-4 text-sm">
+                <AccordionContent  className="text-gray-500 data-[state=open]:text-gray-800 transition-colors duration-300">
                    <ul className="space-y-3">
                     <li className="flex items-start gap-3"><Cpu size={20} className="mt-1 flex-shrink-0 text-primary" /> <div><strong>SO:</strong> {game.os || 'N/A'}</div></li>
                     <li className="flex items-start gap-3"><Gamepad2 size={20} className="mt-1 flex-shrink-0 text-primary" /> <div><strong>Procesador:</strong> {game.processor || 'N/A'}</div></li>
