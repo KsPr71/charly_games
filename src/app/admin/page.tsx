@@ -412,7 +412,7 @@ import { Lock } from "lucide-react";
     };
   
     return (
-      <div className="container mx-auto px-10 py-8">
+      <div className="container mx-auto px-5 py-8">
         {isAuthenticated ? (
           <AdminPanel />
         ) : (
