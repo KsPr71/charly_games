@@ -35,24 +35,34 @@ function CategoryCarousel({
       </button>
 
       {/* Carrusel de categorías */}
-      <div
-        ref={scrollRef}
-        className="mx-8 flex gap-3 overflow-x-auto scroll-smooth px-4 py-2"
-      >
-        {categories.map((category) => (
-          <button
-            key={category}
-            onClick={() => onSelectCategory(category)}
-            className={`px-4 py-2 rounded-full border text-sm flex-shrink-0 whitespace-nowrap transition-all ${
-              selectedCategory === category
-                ? "bg-blue-600 text-white border-blue-600 font-semibold shadow"
-                : "bg-white border-gray-300 text-gray-700 hover:bg-gray-100"
-            }`}
-          >
-            {category}
-          </button>
-        ))}
-      </div>
+<div
+  ref={scrollRef}
+  className="mx-8 flex gap-3 overflow-x-auto scroll-smooth px-4 py-2"
+  style={{
+    scrollbarWidth: "none",         // Firefox
+    msOverflowStyle: "none",        // IE 10+
+  }}
+>
+  <style jsx>{`
+    div::-webkit-scrollbar {
+      display: none;
+    }
+  `}</style>
+
+  {categories.map((category) => (
+    <button
+      key={category}
+      onClick={() => onSelectCategory(category)}
+      className={`px-4 py-2 rounded-full border text-sm flex-shrink-0 whitespace-nowrap transition-all ${
+        selectedCategory === category
+          ? "bg-blue-600 text-white border-blue-600 font-semibold shadow"
+          : "bg-white border-gray-300 text-gray-700 hover:bg-gray-100"
+      }`}
+    >
+      {category}
+    </button>
+  ))}
+</div>
 
       {/* Flecha derecha */}
       <button
