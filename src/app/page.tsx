@@ -56,13 +56,27 @@ const filteredGames = useMemo(() => {
       <div className="container mx-auto px-4 py-8 bg-gray-100">
 
 
+
+  {/* Imagen base */}
 <div className="relative w-full h-[400px] overflow-hidden">
+  {/* Imagen fondo */}
   <Image
     src="/baner.png"
     alt="Banner principal"
     fill
-    className="object-cover object-center lg:object-top"
+    className="object-cover object-center lg:object-top opacity-0 transition-opacity duration-1000 delay-300 ease-in-out"
+    onLoadingComplete={(img) => img.classList.remove('opacity-0')}
     priority
+  />
+
+  {/* Imagen encima */}
+  <Image
+    src="/logo.png"
+    alt="Banner encima"
+    width={200}
+    height={200}
+    className="absolute top-40 left-1/2 -translate-x-1/2 opacity-0 transition-opacity duration-1000 delay-300 ease-in-out"
+    onLoadingComplete={(img) => img.classList.remove('opacity-0')}
   />
 </div>
         <div className="text-center">
