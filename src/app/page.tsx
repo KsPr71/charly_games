@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useContext } from 'react';
+import { useState, useMemo, useContext, useRef } from 'react';
 import { GameCard } from '@/components/game-card';
 import { CategoryFilters } from '@/components/category-filters';
 import { GameContext } from '@/context/game-provider';
@@ -8,6 +8,8 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { GameDetailsDialog } from '@/components/game-details-dialog';
 import type { Game } from '@/lib/types';
 import "../app/globals.css";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import  CategoryCarousel  from '../components/ui/category-carousel';
 
 
 import {
@@ -95,11 +97,13 @@ export default function Home() {
         <Separator className="my-12" />
 
         <h2 className="mb-8 text-3xl font-bold text-center font-headline">Explorar todo</h2>
-        <CategoryFilters
-          categories={categories}
-          selectedCategory={selectedCategory}
-          onSelectCategory={setSelectedCategory}
-        />
+<div className="w-full overflow-x-auto">
+<CategoryCarousel
+  categories={categories}
+  selectedCategory={selectedCategory}
+  onSelectCategory={setSelectedCategory}
+/>
+</div>
 
         {isLoading ? (
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
