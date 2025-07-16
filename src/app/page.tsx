@@ -11,6 +11,7 @@ import "../app/globals.css";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import  CategoryCarousel  from '../components/ui/category-carousel';
 import { Search } from "lucide-react";
+import  Image  from 'next/image';
 
 
 
@@ -53,8 +54,20 @@ const filteredGames = useMemo(() => {
   return (
     <div className="min-h-screen bg-gray-100">
       <div className="container mx-auto px-4 py-8 bg-gray-100">
+
+
+<div className="w-full animate-[fadeIn_1.5s_ease-in-out_forwards]">
+  <Image
+    src="/baner.png"
+    alt="Banner principal"
+    width={1920}
+    height={400}
+    className="w-full h-auto object-cover"
+    priority
+  />
+</div>
         <div className="text-center">
-            <h1 className="mb-4 text-4xl font-bold font-headline">CATÁLOGO DE JUEGOS</h1>
+            <h1 className="mb-4 text-4xl font-bold font-headline py-5">CATÁLOGO DE JUEGOS</h1>
             <p className="mb-8 text-lg text-muted-foreground">
               Explora nuestra colección de juegos para PC.
             </p>
