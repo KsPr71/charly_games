@@ -56,13 +56,12 @@ const filteredGames = useMemo(() => {
       <div className="container mx-auto px-4 py-8 bg-gray-100">
 
 
-<div className="w-full">
+<div className="relative w-full h-[400px] overflow-hidden">
   <Image
     src="/baner.png"
     alt="Banner principal"
-    width={1920}
-    height={400}
-    className="w-full h-auto object-cover object-center lg:object-top"
+    fill
+    className="object-cover object-center lg:object-top"
     priority
   />
 </div>
