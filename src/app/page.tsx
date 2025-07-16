@@ -12,6 +12,8 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import  CategoryCarousel  from '../components/ui/category-carousel';
 
 
+
+
 import {
   Carousel,
   CarouselContent,
@@ -25,6 +27,8 @@ export default function Home() {
   const { games, isLoading } = useContext(GameContext);
   const [selectedCategory, setSelectedCategory] = useState<string>('Todos');
   const [selectedGame, setSelectedGame] = useState<Game | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
+const [showSearchInput, setShowSearchInput] = useState(false);
 
   const recentGames = useMemo(() => {
     return games.slice(0, 5);
@@ -35,12 +39,15 @@ export default function Home() {
     return ['Todos', ...Array.from(new Set(allCategories))];
   }, [games]);
 
-  const filteredGames = useMemo(() => {
-    if (selectedCategory === 'Todos') {
-      return games;
-    }
-    return games.filter((game) => game.category === selectedCategory);
-  }, [games, selectedCategory]);
+const filteredGames = useMemo(() => {
+  const byCategory = selectedCategory === 'Todos'
+    ? games
+    : games.filter((game) => game.category === selectedCategory);
+
+  return byCategory.filter((game) =>
+    game.title.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+}, [games, selectedCategory, searchTerm]);
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -103,6 +110,25 @@ export default function Home() {
   selectedCategory={selectedCategory}
   onSelectCategory={setSelectedCategory}
 />
+</div>
+<div className="relative flex items-center justify-center my-6">
+  <button
+    onClick={() => setShowSearchInput(!showSearchInput)}
+    className="p-2 rounded-full bg-fuchsia-500 text-white hover:bg-fuchsia-700 text-sm italic shadow transition"
+    title="Buscar juego por nombre"
+  >
+    <span className="text-lg font-italic">Buscar...</span>
+  </button>
+
+  <input
+    type="text"
+    placeholder="Buscar por nombre..."
+    value={searchTerm}
+    onChange={(e) => setSearchTerm(e.target.value)}
+    className={`ml-3 transition-all duration-300 ease-in-out text-sm p-2 rounded-md bg-white border border-gray-300 shadow-sm ${
+      showSearchInput ? 'w-48 opacity-100' : 'w-0 opacity-0 overflow-hidden'
+    }`}
+  />
 </div>
 
         {isLoading ? (
