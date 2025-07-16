@@ -11,6 +11,7 @@ import {
   SheetContent,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import Image from 'next/image';
 
 const NavLink = ({ href, children }: { href: string; children: React.ReactNode }) => {
   const pathname = usePathname();
@@ -58,7 +59,15 @@ export function Header() {
         )}
       >
         <Link href="/" className="mr-6 flex items-center space-x-2">
-            <Gamepad2 className="h-6 w-6 text-fuchsia-800" />
+            
+            <Image 
+              src="/icon.png"
+              alt="Logo Charly Games"
+              width={32}
+              height={32}
+              className="h-8 w-8 rounded-full object-cover"
+            
+            />
             <span className="font-bold sm:inline-block">
               <span className="text-blue-900">CHARLY</span><span className="text-fuchsia-900">GAMES</span>
             </span>

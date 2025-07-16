@@ -71,7 +71,7 @@ const filteredGames = useMemo(() => {
 
   {/* Imagen encima */}
   <Image
-    src="/logo.png"
+    src="/logo1.png"
     alt="Banner encima"
     width={200}
     height={200}
@@ -138,25 +138,15 @@ const filteredGames = useMemo(() => {
   onSelectCategory={setSelectedCategory}
 />
 </div>
-<div className="relative flex items-center justify-center my-6">
+<div className="fixed bottom-6 right-6 z-50 flex items-center">
   {/* Botón redondo con lupa */}
-<button
-  onClick={() => setShowSearchInput(!showSearchInput)}
-  className="p-2 rounded-full bg-fuchsia-500 hover:bg-fuchsia-700 text-white shadow-lg text-sm italic transition transform active:scale-90 animate-bounce-slow"
-  title="Buscar juego por nombre"
->
-  <Search className="h-4 w-4" />
-</button>
-<style jsx>{`
-  @keyframes bounceSlow {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-4px); }
-  }
-
-  .animate-bounce-slow {
-    animation: bounceSlow 1s infinite;
-  }
-`}</style>
+  <button
+    onClick={() => setShowSearchInput(!showSearchInput)}
+    className="p-2 rounded-full bg-fuchsia-500 hover:bg-fuchsia-700 text-white shadow-lg text-sm italic transition transform active:scale-90 animate-bounce-slow"
+    title="Buscar juego por nombre"
+  >
+    <Search className="h-4 w-4" />
+  </button>
 
   {/* Campo de búsqueda expandible */}
   <input
@@ -164,11 +154,22 @@ const filteredGames = useMemo(() => {
     placeholder="Buscar por nombre..."
     value={searchTerm}
     onChange={(e) => setSearchTerm(e.target.value)}
-    onBlur={() => setShowSearchInput(false)} // opcional: cerrar al perder foco
+    onBlur={() => setShowSearchInput(false)}
     className={`ml-3 transition-all duration-300 ease-in-out text-sm italic p-2 rounded-md bg-white border border-gray-300 shadow-sm ${
       showSearchInput ? 'w-48 opacity-100' : 'w-0 opacity-0 overflow-hidden'
     }`}
   />
+
+  <style jsx>{`
+    @keyframes bounceSlow {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-4px); }
+    }
+
+    .animate-bounce-slow {
+      animation: bounceSlow 1s infinite;
+    }
+  `}</style>
 </div>
 
         {isLoading ? (
