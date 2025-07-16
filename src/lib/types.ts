@@ -10,5 +10,6 @@ export interface Game{
   memory?: string;
   graphics?: string;
   storage?: string;
+  weight?: number;
  
 }

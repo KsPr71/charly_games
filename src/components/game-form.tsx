@@ -25,7 +25,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Loader2 } from "lucide-react";
@@ -48,6 +47,7 @@ const formSchema = z.object({
   memory: z.string().optional(),
   graphics: z.string().optional(),
   storage: z.string().optional(),
+  weight: z.coerce.number().min(0).optional(),
 });
 type GameFormValues = z.infer<typeof formSchema>;
 
@@ -57,9 +57,79 @@ interface GameFormProps {
   game?: Game;
 }
 
+function usePriceRanges() {
+  const [ranges, setRanges] = useState<
+    { min: number; max: number; price: number }[]
+  >([]);
+
+  useEffect(() => {
+    async function fetchRanges() {
+      const { data, error } = await supabase
+        .from("price")
+        .select("min, max, price");
+
+      if (!error && data) setRanges(data);
+    }
+
+    fetchRanges();
+  }, []);
+
+  return ranges;
+}
+
 export function GameForm({ isOpen, setIsOpen, game }: GameFormProps) {
   const { games, addGame, updateGame } = useContext(GameContext);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const ranges = usePriceRanges();
+
+function calcularPrecio(weight: unknown): number {
+  const peso = typeof weight === "string" ? Number(weight) : weight;
+
+  if (!ranges.length || typeof peso !== "number" || isNaN(peso)) return 0;
+
+  const rango = ranges.find((r) => peso >= r.min && peso <= r.max);
+  return rango ? rango.price : 0;
+}
+
+  const defaultValues: GameFormValues = useMemo(
+    () => ({
+      title: game?.title ?? "",
+      description: game?.description ?? "",
+      category: game?.category ?? "",
+      price: game?.price ?? calcularPrecio(game?.weight ?? 0),
+      imageUrl: game?.imageUrl ?? "",
+      os: game?.os ?? "",
+      processor: game?.processor ?? "",
+      memory: game?.memory ?? "",
+      graphics: game?.graphics ?? "",
+      storage: game?.storage ?? "",
+      weight: game?.weight ?? 0,
+    }),
+    [game, ranges]
+  );
+
+
+
+  const form = useForm<GameFormValues>({
+    resolver: zodResolver(formSchema),
+    defaultValues,
+  });
+
+  const currentWeight = form.watch("weight");
+  const estimatedPrice = calcularPrecio(currentWeight);
+
+  useEffect(() => {
+    if (
+      typeof currentWeight === "number" &&
+      !isNaN(currentWeight)
+    ) {
+      form.setValue("price", estimatedPrice, { shouldValidate: true });
+    }
+  }, [currentWeight, estimatedPrice, form]);
+
+  useEffect(() => {
+    form.reset(defaultValues);
+  }, [defaultValues]);
 
   useEffect(() => {
     if (game?.imageUrl) {
@@ -67,35 +137,31 @@ export function GameForm({ isOpen, setIsOpen, game }: GameFormProps) {
     }
   }, [game]);
 
-  const allCategories = useMemo(() => {
-    const categoriesSet = new Set(games.map((g) => g.category));
-    return Array.from(categoriesSet).sort();
-  }, [games]);
+useEffect(() => {
+  const subscription = form.watch((value, { name }) => {
+    if (
+      name === "weight" &&
+      typeof value.weight === "number" &&
+      !isNaN(value.weight) &&
+      ranges.length > 0
+    ) {
+      const rango = ranges.find(
+        (r) =>
+          typeof r.min === "number" &&
+          typeof r.max === "number" &&
+          value.weight >= r.min &&
+          value.weight <= r.max
+      );
 
-  const defaultValues: GameFormValues = useMemo(
-    () => ({
-      title: game?.title ?? "",
-      description: game?.description ?? "",
-      category: game?.category ?? "",
-      price: game?.price ?? 0,
-      imageUrl: game?.imageUrl ?? "",
-      os: game?.os ?? "",
-      processor: game?.processor ?? "",
-      memory: game?.memory ?? "",
-      graphics: game?.graphics ?? "",
-      storage: game?.storage ?? "",
-    }),
-    [game]
-  );
-
-  const form = useForm<GameFormValues>({
-    resolver: zodResolver(formSchema),
-    defaultValues,
+      const precioCalculado = rango ? rango.price : 0;
+      form.setValue("price", precioCalculado, { shouldValidate: true });
+    }
   });
 
-  useEffect(() => {
-    form.reset(defaultValues);
-  }, [defaultValues]);
+  return () => subscription.unsubscribe();
+}, [form, ranges]);
+
+
 
   const handleImageUpload = async (file: File): Promise<string> => {
     const fileExt = file.name.split(".").pop();
@@ -130,13 +196,22 @@ export function GameForm({ isOpen, setIsOpen, game }: GameFormProps) {
     setIsOpen(false);
   };
 
+  const allCategories = useMemo(() => {
+    const categoriesSet = new Set(games.map((g) => g.category));
+    return Array.from(categoriesSet).sort();
+  }, [games]);
+
   const fieldLabels: Record<string, string> = {
     os: "Sistema Operativo",
     processor: "Procesador",
     memory: "Memoria RAM",
     graphics: "Tarjeta Gráfica",
     storage: "Almacenamiento",
+    weight: "Tamaño (GB)",
   };
+
+    const weightValue = form.watch("weight");
+const precioCalculado = calcularPrecio(weightValue);
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -199,6 +274,8 @@ export function GameForm({ isOpen, setIsOpen, game }: GameFormProps) {
                   )}
                 />
 
+                
+
                 <FormField
                   control={form.control}
                   name="category"
@@ -250,6 +327,33 @@ export function GameForm({ isOpen, setIsOpen, game }: GameFormProps) {
                     </div>
                   </div>
                 )}
+
+<FormField
+  control={form.control}
+  name="weight"
+  render={({ field }) => (
+    <FormItem>
+      <FormLabel>Tamaño</FormLabel>
+      <FormControl>
+        <Input
+  type="number"
+  min={0}
+  step={1}
+  value={form.watch("weight") ?? ""}
+  onChange={(e) => {
+    const valor = Number(e.target.value);
+    form.setValue("weight", isNaN(valor) ? undefined : valor, { shouldValidate: true });
+  }}
+/>
+      </FormControl>
+      <FormMessage />
+      {/* ✅ Vista del precio calculado */}
+      <p className="text-sm text-muted-foreground mt-1">
+        Precio estimado: ${precioCalculado.toFixed(2)}
+      </p>
+    </FormItem>
+  )}
+/>
 
                 <div className="grid grid-cols-2 gap-4">
                   <FormField

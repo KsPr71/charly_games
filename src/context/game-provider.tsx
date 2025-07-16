@@ -75,6 +75,7 @@ const addGame = async (game: Omit<Game, 'id' | 'created_at'>) => {
         memory: game.memory,
         graphics: game.graphics,
         storage: game.storage,
+        weight: game.weight, // Asegúrate de que 'weight' esté definido en tu tipo Game
       
       })
       .select()
@@ -102,6 +103,7 @@ const addGame = async (game: Omit<Game, 'id' | 'created_at'>) => {
         memory: game.memory,
         graphics: game.graphics,
         storage: game.storage,
+        weight: game.weight, // Asegúrate de que 'weight' esté definido en tu tipo Game
         })
         .eq('id', game.id)
       if (error) throw error
