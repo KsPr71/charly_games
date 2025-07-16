@@ -138,7 +138,7 @@ const filteredGames = useMemo(() => {
   onSelectCategory={setSelectedCategory}
 />
 </div>
-<div className="fixed bottom-6 right-6 z-50 flex items-center">
+<div className="fixed top-20 right-6 z-50 flex items-center">
   {/* Botón redondo con lupa */}
   <button
     onClick={() => setShowSearchInput(!showSearchInput)}
