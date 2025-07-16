@@ -113,20 +113,33 @@ const filteredGames = useMemo(() => {
 />
 </div>
 <div className="relative flex items-center justify-center my-6">
+  {/* Botón redondo con lupa */}
 <button
   onClick={() => setShowSearchInput(!showSearchInput)}
-  className="p-2 rounded-full bg-fuchsia-500 hover:bg-fuchsia-700 text-white shadow-md transition transform active:scale-95"
+  className="p-2 rounded-full bg-fuchsia-500 hover:bg-fuchsia-700 text-white shadow-lg text-sm italic transition transform active:scale-90 animate-bounce-slow"
   title="Buscar juego por nombre"
 >
   <Search className="h-4 w-4" />
 </button>
+<style jsx>{`
+  @keyframes bounceSlow {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
+  }
 
+  .animate-bounce-slow {
+    animation: bounceSlow 1s infinite;
+  }
+`}</style>
+
+  {/* Campo de búsqueda expandible */}
   <input
     type="text"
     placeholder="Buscar por nombre..."
     value={searchTerm}
     onChange={(e) => setSearchTerm(e.target.value)}
-    className={`ml-3 transition-all duration-300 ease-in-out text-sm p-2 rounded-md bg-white border border-gray-300 shadow-sm ${
+    onBlur={() => setShowSearchInput(false)} // opcional: cerrar al perder foco
+    className={`ml-3 transition-all duration-300 ease-in-out text-sm italic p-2 rounded-md bg-white border border-gray-300 shadow-sm ${
       showSearchInput ? 'w-48 opacity-100' : 'w-0 opacity-0 overflow-hidden'
     }`}
   />
