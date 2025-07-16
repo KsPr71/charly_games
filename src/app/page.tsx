@@ -56,13 +56,13 @@ const filteredGames = useMemo(() => {
       <div className="container mx-auto px-4 py-8 bg-gray-100">
 
 
-<div className="w-full animate-[fadeIn_1.5s_ease-in-out_forwards]">
+<div className="w-full">
   <Image
     src="/baner.png"
     alt="Banner principal"
     width={1920}
     height={400}
-    className="w-full h-auto object-cover"
+    className="w-full h-auto object-cover object-center lg:object-top"
     priority
   />
 </div>
