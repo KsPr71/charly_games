@@ -10,6 +10,7 @@ import type { Game } from '@/lib/types';
 import "../app/globals.css";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import  CategoryCarousel  from '../components/ui/category-carousel';
+import { Search } from "lucide-react";
 
 
 
@@ -112,13 +113,13 @@ const filteredGames = useMemo(() => {
 />
 </div>
 <div className="relative flex items-center justify-center my-6">
-  <button
-    onClick={() => setShowSearchInput(!showSearchInput)}
-    className="p-2 rounded-full bg-fuchsia-500 text-white hover:bg-fuchsia-700 text-sm italic shadow transition"
-    title="Buscar juego por nombre"
-  >
-    <span className="text-lg font-italic">Buscar...</span>
-  </button>
+<button
+  onClick={() => setShowSearchInput(!showSearchInput)}
+  className="p-2 rounded-full bg-fuchsia-500 hover:bg-fuchsia-700 text-white shadow-md transition transform active:scale-95"
+  title="Buscar juego por nombre"
+>
+  <Search className="h-4 w-4" />
+</button>
 
   <input
     type="text"
