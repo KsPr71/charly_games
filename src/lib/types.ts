@@ -11,5 +11,13 @@ export interface Game{
   graphics?: string;
   storage?: string;
   weight?: number;
- 
 }
+
+export interface TopRatedGame {
+  id: number;
+  title: string;
+  image_url: string;
+  average_rating: number;
+}
+
+

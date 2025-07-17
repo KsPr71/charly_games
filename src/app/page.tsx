@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useContext, useRef } from 'react';
+import { useState, useMemo, useContext, useRef, useEffect } from 'react';
 import { GameCard } from '@/components/game-card';
 import { CategoryFilters } from '@/components/category-filters';
 import { GameContext } from '@/context/game-provider';
@@ -12,6 +12,9 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import  CategoryCarousel  from '../components/ui/category-carousel';
 import { Search } from "lucide-react";
 import  Image  from 'next/image';
+import { getTopRatedGames } from '../components/topRated';
+import type { TopRatedGame } from '@/lib/types';
+
 
 
 
@@ -50,6 +53,12 @@ const filteredGames = useMemo(() => {
     game.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
 }, [games, selectedCategory, searchTerm]);
+
+const [topGames, setTopGames] = useState([]);
+
+useEffect(() => {
+  getTopRatedGames(5).then(setTopGames);
+}, []);
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -129,6 +138,50 @@ const filteredGames = useMemo(() => {
         )}
         
         <Separator className="my-12" />
+{topGames.length > 0 && (
+  <div className="mb-12">
+    <h2 className="text-3xl font-bold text-center mb-6 font-headline">Top Mejor Valorados</h2>
+    <Carousel
+      opts={{ align: 'start', loop: true }}
+      className="w-full"
+    >
+      <CarouselContent>
+        {topGames.map((top) => (
+          <CarouselItem key={top.id} className="p-2 md:basis-1/2 lg:basis-1/3 xl:basis-1/4">
+            <div className="bg-white rounded-lg shadow-md p-4 hover:scale-105 transition-transform">
+              <div className="relative w-full aspect-[3/2] mb-3 rounded overflow-hidden">
+                <Image
+                  src={top.image_url}
+                  alt={`Portada de ${top.title}`}
+                  fill
+                  className="object-cover rounded"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                />
+              </div>
+              <h3 className="text-lg font-bold text-center">{top.title}</h3>
+              <div className="flex justify-center mt-2 space-x-1">
+                {Array.from({ length: 5 }).map((_, i) => {
+                  const filled = i < Math.round(top.average_rating);
+                  return (
+                    <span key={i} className={`text-xl ${filled ? 'text-yellow-500' : 'text-gray-300'}`}>
+                      {filled ? '★' : '☆'}
+                    </span>
+                  );
+                })}
+              </div>
+              <p className="text-sm text-gray-500 text-center mt-1">
+                Promedio: {top.average_rating.toFixed(2)} / 5
+              </p>
+            </div>
+          </CarouselItem>
+        ))}
+      </CarouselContent>
+      <CarouselPrevious className="hidden sm:flex" />
+      <CarouselNext className="hidden sm:flex" />
+    </Carousel>
+  </div>
+)}
+
 
         <h2 className="mb-8 text-3xl font-bold text-center font-headline">Explorar todo</h2>
 <div className="w-full overflow-x-auto">
