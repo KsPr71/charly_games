@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import type { Game } from "@/lib/types";
 import {
@@ -29,6 +29,9 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { cn } from "@/lib/utils";
+import StarRating from '../components/starRating';
+import { submitRating } from '../components/submitRating';
+import { getAverageRating } from '../components/getAverageRating';
 
 interface GameCardProps {
   game: Game;
@@ -44,6 +47,18 @@ export function GameCard({ game, onCardClick }: GameCardProps) {
 
   const [isAccordionOpen, setIsAccordionOpen] = useState(false);
   const [showFull, setShowFull] = useState(false);
+    const [average, setAverage] = useState(0);
+
+  useEffect(() => {
+    getAverageRating(game.id).then(setAverage);
+  }, [game.id]);
+
+const handleVote = async (value: number, e?: React.MouseEvent) => {
+  e?.stopPropagation(); // Evita que se abra el modal de detalles
+  await submitRating(game.id, value);
+  const updated = await getAverageRating(game.id);
+  setAverage(updated);
+};
 
   return (
     <Card className="flex h-full transform flex-col overflow-hidden rounded-lg shadow-lg transition-transform duration-300 hover:scale-105 hover:shadow-xl bg-white relative z-0">
@@ -70,13 +85,19 @@ export function GameCard({ game, onCardClick }: GameCardProps) {
           <CardTitle className="mb-2 text-xl font-bold font-headline">
             {game.title}
           </CardTitle>
-          <CardDescription
-            className={`mb-4 text-sm transition-all duration-300 ease-in-out ${
-              showFull ? "" : "line-clamp-4"
-            }`}
-          >
-            {game.description}
-          </CardDescription>
+<CardDescription
+  className={`mb-4 text-sm transition-all duration-300 ease-in-out ${
+    showFull ? "" : "line-clamp-4"
+  }`}
+>
+  {game.description}
+</CardDescription>
+
+{/* Mostrar estrellas afuera para que no se oculten */}
+<div className="px-4 pb-2">
+  <StarRating initialRating={Math.round(average)} onRate={handleVote} />
+  <p className="text-sm text-gray-500 mt-1">Promedio: {average} / 5</p>
+</div>
         </CardContent>
       </div>
 
