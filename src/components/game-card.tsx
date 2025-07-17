@@ -29,7 +29,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { cn } from "@/lib/utils";
-import StarRating from '../components/starRating';
+import {StarRating} from '../components/starRating';
 import { submitRating } from '../components/submitRating';
 import { getAverageRating } from '../components/getAverageRating';
 
@@ -38,6 +38,7 @@ interface GameCardProps {
   onCardClick: () => void;
   onVote?: () => void;
 }
+
 
 export function GameCard({ game, onCardClick, onVote }: GameCardProps) {
   const whatsappNumber = "+5352708602";
@@ -48,11 +49,17 @@ export function GameCard({ game, onCardClick, onVote }: GameCardProps) {
 
   const [isAccordionOpen, setIsAccordionOpen] = useState(false);
   const [showFull, setShowFull] = useState(false);
-    const [average, setAverage] = useState(0);
+    const [average, setAverage] = useState<number>(0);
+
 
   useEffect(() => {
-    getAverageRating(game.id).then(setAverage);
-  }, [game.id]);
+  getAverageRating(game.id).then(setAverage);
+}, [game.id]);
+
+useEffect(() => {
+  getAverageRating(game.id).then((avg) => setAverage(avg ?? 0));
+}, [game.id]);
+
 
 const handleVote = async (value: number) => {
   await submitRating(game.id, value);
@@ -97,8 +104,15 @@ const handleVote = async (value: number) => {
 
 {/* Mostrar estrellas afuera para que no se oculten */}
 <div className="px-4 pb-2">
-  <StarRating initialRating={Math.round(average)} onRate={handleVote} />
-  <p className="text-sm text-gray-500 mt-1">Promedio: {average} / 5</p>
+
+
+<StarRating
+  gameId={game.id}
+  initialAverage={average} // ← esta SÍ está definida arriba
+  onVoteComplete={onVote}
+/>
+
+
 </div>
         </CardContent>
       </div>

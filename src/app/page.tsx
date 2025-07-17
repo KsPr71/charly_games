@@ -18,7 +18,6 @@ import type { TopRatedGame } from '@/lib/types';
 
 
 
-
 import {
   Carousel,
   CarouselContent,
@@ -149,13 +148,10 @@ useEffect(() => {
 {topGames.length > 0 && (
   <div className="mb-12">
     <h2 className="text-3xl font-bold text-center mb-6 font-headline">Top Mejor Valorados</h2>
-    <Carousel
-      opts={{ align: 'start', loop: true }}
-      className="w-full" 
-        autoPlay={true}           // activa autoplay
-        autoPlayInterval={5000}   // cambia cada 5 segundos
-        pauseOnHover={true} 
-    >
+<Carousel
+  opts={{ align: 'start', loop: true }}
+  className="w-full"
+>
       <CarouselContent>
         {topGames.map((top) => (
           <CarouselItem key={top.id} className="p-2 md:basis-1/2 lg:basis-1/3 xl:basis-1/4">
@@ -171,6 +167,7 @@ useEffect(() => {
               </div>
               <h3 className="text-lg font-bold text-center">{top.title}</h3>
               <div className="flex justify-center mt-2 space-x-1">
+
                 {Array.from({ length: 5 }).map((_, i) => {
                   const filled = i < Math.round(top.average_rating);
                   return (
@@ -180,9 +177,7 @@ useEffect(() => {
                   );
                 })}
               </div>
-              <p className="text-sm text-gray-500 text-center mt-1">
-                Promedio: {top.average_rating.toFixed(2)} / 5
-              </p>
+
             </div>
           </CarouselItem>
         ))}

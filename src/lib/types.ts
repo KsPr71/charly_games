@@ -20,4 +20,10 @@ export interface TopRatedGame {
   average_rating: number;
 }
 
+interface StarRatingProps {
+  gameId: number;
+  onVoteComplete?: () => void;
+  initialAverage?: number;
+}
+
 
