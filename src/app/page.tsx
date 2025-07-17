@@ -56,6 +56,11 @@ const filteredGames = useMemo(() => {
 
 const [topGames, setTopGames] = useState([]);
 
+const refreshTopRated = () => {
+  getTopRatedGames(5).then(setTopGames);
+};
+
+
 useEffect(() => {
   getTopRatedGames(5).then(setTopGames);
 }, []);
@@ -126,7 +131,10 @@ useEffect(() => {
                 {recentGames.map((game) => (
                   <CarouselItem key={game.id} className="p-2 md:basis-1/2 lg:basis-1/3 xl:basis-1/4">
                     <div className="p-3">
-                      <GameCard game={game} onCardClick={() => setSelectedGame(game)} />
+                      <GameCard 
+                      game={game} 
+                      onCardClick={() => setSelectedGame(game)}
+                      onVote={refreshTopRated}  />
                     </div>
                   </CarouselItem>
                 ))}
@@ -143,7 +151,10 @@ useEffect(() => {
     <h2 className="text-3xl font-bold text-center mb-6 font-headline">Top Mejor Valorados</h2>
     <Carousel
       opts={{ align: 'start', loop: true }}
-      className="w-full"
+      className="w-full" 
+        autoPlay={true}           // activa autoplay
+        autoPlayInterval={5000}   // cambia cada 5 segundos
+        pauseOnHover={true} 
     >
       <CarouselContent>
         {topGames.map((top) => (
@@ -195,6 +206,7 @@ useEffect(() => {
   {/* Botón redondo con lupa */}
   <button
     onClick={() => setShowSearchInput(!showSearchInput)}
+    
     className="p-2 rounded-full bg-fuchsia-500 hover:bg-fuchsia-700 text-white shadow-lg text-sm italic transition transform active:scale-90 animate-bounce-slow"
     title="Buscar juego por nombre"
   >
@@ -240,7 +252,7 @@ useEffect(() => {
         ) : filteredGames.length > 0 ? (
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {filteredGames.map((game) => (
-              <GameCard key={game.id} game={game} onCardClick={() => setSelectedGame(game)} />
+              <GameCard key={game.id} game={game} onCardClick={() => setSelectedGame(game)} onVote={refreshTopRated} />
             ))}
           </div>
         ) : (

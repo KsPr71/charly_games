@@ -36,9 +36,10 @@ import { getAverageRating } from '../components/getAverageRating';
 interface GameCardProps {
   game: Game;
   onCardClick: () => void;
+  onVote?: () => void;
 }
 
-export function GameCard({ game, onCardClick }: GameCardProps) {
+export function GameCard({ game, onCardClick, onVote }: GameCardProps) {
   const whatsappNumber = "+5352708602";
   const message = encodeURIComponent(
     `Hola! Me interesa el juego ${game.title}. ¿Podrían darme más información?`
@@ -53,11 +54,12 @@ export function GameCard({ game, onCardClick }: GameCardProps) {
     getAverageRating(game.id).then(setAverage);
   }, [game.id]);
 
-const handleVote = async (value: number, e?: React.MouseEvent) => {
-  e?.stopPropagation(); // Evita que se abra el modal de detalles
+const handleVote = async (value: number) => {
   await submitRating(game.id, value);
   const updated = await getAverageRating(game.id);
   setAverage(updated);
+
+  onVote?.(); // ← 🔁 Esto recalcula los Top Valorados en Home
 };
 
   return (
