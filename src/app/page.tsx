@@ -14,7 +14,7 @@ import { Search } from "lucide-react";
 import  Image  from 'next/image';
 import { getTopRatedGames } from '../components/topRated';
 import type { TopRatedGame } from '@/lib/types';
-
+import WhatsAppFloatingButton from '@/components/ui/botonW';
 
 
 
@@ -230,6 +230,10 @@ useEffect(() => {
       animation: bounceSlow 1s infinite;
     }
   `}</style>
+</div>
+
+<div className="fixed bottom-4 right-4 z-50 bg-green-500 p-3 md:p-4">
+  <WhatsAppFloatingButton/>
 </div>
 
         {isLoading ? (

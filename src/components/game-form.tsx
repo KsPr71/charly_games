@@ -48,6 +48,7 @@ const formSchema = z.object({
   graphics: z.string().optional(),
   storage: z.string().optional(),
   weight: z.coerce.number().min(0.1).optional(),
+  image: z.string().url().optional(),
 });
 type GameFormValues = z.infer<typeof formSchema>;
 
@@ -56,6 +57,8 @@ interface GameFormProps {
   setIsOpen: (open: boolean) => void;
   game?: Game;
 }
+
+
 
 function usePriceRanges() {
   const [ranges, setRanges] = useState<
@@ -81,6 +84,7 @@ export function GameForm({ isOpen, setIsOpen, game }: GameFormProps) {
   const { games, addGame, updateGame } = useContext(GameContext);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const ranges = usePriceRanges();
+  
 
 function calcularPrecio(weight: unknown): number {
   const peso = typeof weight === "string" ? Number(weight) : weight;
@@ -104,6 +108,7 @@ function calcularPrecio(weight: unknown): number {
       graphics: game?.graphics ?? "",
       storage: game?.storage ?? "",
       weight: game?.weight ?? 0,
+      
     }),
     [game, ranges]
   );
@@ -114,6 +119,7 @@ function calcularPrecio(weight: unknown): number {
     resolver: zodResolver(formSchema),
     defaultValues,
   });
+  const [isUploading, setIsUploading] = useState<boolean>(false); // 👈 loader
 
   const currentWeight = form.watch("weight");
   const estimatedPrice = calcularPrecio(currentWeight);
@@ -375,54 +381,97 @@ const precioCalculado = calcularPrecio(weightValue);
                     )}
                   />
 
-                  <FormField
-                    control={form.control}
-                    name="imageUrl"
-                    render={() => (
-                      <FormItem>
-                        <FormLabel>Imagen del juego</FormLabel>
-                        <FormControl>
-                          <div className="space-y-2">
-                            {previewUrl && (
-                              <img
-                                src={previewUrl}
-                                alt="Vista previa"
-                                className="rounded-md border w-full object-cover max-h-48"
-                              />
-                            )}
-                            <Input
-                              type="file"
-                              accept="image/*"
-                              onChange={async (e) => {
-                                const file = e.target.files?.[0];
-                                if (!file) return;
-                                if (file.size > 5_000_000) {
-                                  console.error("Archivo muy pesado (>5MB)");
-                                  return;
-                                }
-                                try {
-                                  const publicUrl = await handleImageUpload(
-                                    file
-                                  );
-                                  form.setValue("imageUrl", publicUrl, {
-                                    shouldValidate: true,
-                                  });
-                                  setPreviewUrl(publicUrl);
-                                } catch (error) {
-                                  console.error(
-                                    "Error al subir la imagen:",
-                                    error
-                                  );
-                                }
-                              }}
-                            />
-                          </div>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                  
                 </div>
+
+<FormField
+  control={form.control}
+  name="imageUrl"
+  render={() => (
+    <FormItem>
+      <FormLabel>Imagen del juego (.webp)</FormLabel>
+      <FormControl>
+        <div className="space-y-2">
+          {isUploading && (
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <span className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-primary"></span>
+              Subiendo imagen...
+            </div>
+          )}
+          {previewUrl && !isUploading && (
+            <img
+              src={previewUrl}
+              alt="Vista previa"
+              className="rounded-md border w-full object-cover max-h-48"
+            />
+          )}
+          <Input
+            type="file"
+            accept="image/*"
+            onChange={async (e) => {
+              const file = e.target.files?.[0];
+              if (!file) return;
+              if (file.size > 5_000_000) {
+                console.error("Archivo muy pesado (>5MB)");
+                return;
+              }
+
+              try {
+                setIsUploading(true); // 👈 inicia loader
+
+                const image = new Image();
+                image.src = URL.createObjectURL(file);
+                image.onload = async () => {
+                  const canvas = document.createElement("canvas");
+                  canvas.width = image.width;
+                  canvas.height = image.height;
+                  const ctx = canvas.getContext("2d");
+                  if (!ctx) return;
+                  ctx.drawImage(image, 0, 0);
+
+                  canvas.toBlob(
+                    async (blob) => {
+                      if (blob) {
+                        const fileName = `${Date.now()}.webp`;
+                        const { data, error } = await supabase.storage
+                          .from("game-images")
+                          .upload(fileName, blob, {
+                            contentType: "image/webp",
+                            upsert: false,
+                          });
+
+                        if (error) {
+                          console.error("Error al subir la imagen:", error.message);
+                        } else {
+                          const url = `https://ticudnzjewvqmrgagntg.supabase.co/storage/v1/object/public/game-images/${fileName}`;
+                          form.setValue("imageUrl", url, { shouldValidate: true });
+                          setPreviewUrl(url);
+                        }
+                        setIsUploading(false); // 👈 detiene loader
+                      }
+                    },
+                    "image/webp",
+                    0.8
+                  );
+                };
+              } catch (err) {
+                console.error("Error al procesar la imagen:", err);
+                setIsUploading(false);
+              }
+            }}
+          />
+        </div>
+      </FormControl>
+      <FormMessage />
+    </FormItem>
+  )}
+/>
+
+
+
+
+
+
               </TabsContent>
 
               <TabsContent value="tech" className="space-y-4">
