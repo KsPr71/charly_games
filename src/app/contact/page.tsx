@@ -1,5 +1,6 @@
 import { MapPin, Phone } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import Image from 'next/image';
 
 export default function ContactPage() {
   const address = "Calle Central entre A y D La Mascota, Camagüey, Cuba";
@@ -7,7 +8,16 @@ export default function ContactPage() {
   const mapEmbedUrl = "https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d919.8662423789417!2d-77.9381644056768!3d21.393271875462677!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMjHCsDIzJzM1LjgiTiA3N8KwNTYnMTcuNCJX!5e0!3m2!1ses!2ses!4v1721061925000!5m2!1ses!2ses";
 
   return (
-    <div className="container mx-auto max-w-4xl px-4 py-12">
+    <div className='bg-gray-100'>
+    <div className="flex justify-center items-center py-8"> 
+      <Image
+      src='/logo1.png'
+      alt= 'CharlyGames'
+      width= {200}
+      height= {200}/>
+    </div>
+
+    <div className="container mx-auto max-w-4xl px-4 py-12 p-10 bg-white rounded-lg shadow-md">
       <div className="text-center">
         <h1 className="mb-4 text-4xl font-bold font-headline">Contáctanos</h1>
         <p className="mb-12 text-lg text-muted-foreground">
@@ -17,9 +27,9 @@ export default function ContactPage() {
 
       <div className="grid grid-cols-1 gap-12 md:grid-cols-2">
         <div className="space-y-8">
-          <Card>
+          <Card className='bg-blue-50'>
             <CardHeader>
-              <CardTitle>Nuestra Ubicación</CardTitle>
+              <CardTitle className='text-fuchsia-500'>Nuestra Ubicación</CardTitle>
               <CardDescription>Visítanos en nuestra tienda.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -30,9 +40,9 @@ export default function ContactPage() {
             </CardContent>
           </Card>
           
-          <Card>
+          <Card className='bg-blue-50'>
             <CardHeader>
-              <CardTitle>Teléfono</CardTitle>
+              <CardTitle className='text-fuchsia-500'>Teléfono</CardTitle>
               <CardDescription>Llámanos para cualquier consulta.</CardDescription>
             </CardHeader>
             <CardContent>
@@ -47,9 +57,9 @@ export default function ContactPage() {
         </div>
 
         <div>
-          <Card className="overflow-hidden">
+          <Card className="overflow-hidden bg-blue-50">
              <CardHeader>
-                <CardTitle>Encuéntranos en el Mapa</CardTitle>
+                <CardTitle className='text-fuchsia-500 p-5'>Encuéntranos en el Mapa</CardTitle>
              </CardHeader>
              <CardContent>
                 <div className="aspect-w-16 aspect-h-9 rounded-lg overflow-hidden border">
@@ -68,6 +78,7 @@ export default function ContactPage() {
           </Card>
         </div>
       </div>
+    </div>
     </div>
   );
 }

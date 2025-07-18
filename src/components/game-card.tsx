@@ -125,10 +125,10 @@ const handleVote = async (value: number) => {
         >
           <AccordionItem
             value="requirements"
-            className="border-l border-r border-gray-300 bg-gray-100 rounded-md p-1"
+            className="border-1 border-r border-gray-400 bg-gray-100 rounded-md p-1"
           >
-            <AccordionTrigger className="flex w-full justify-center rounded-md bg-secondary px-4 py-2 text-sm font-medium text-secondary-foreground hover:bg-secondary/80 hover:no-underline">
-              <span>Ver Requisitos</span>
+            <AccordionTrigger className="flex w-full justify-center rounded-md bg-gray-100 px-4 py-2 text-sm text-bold font-medium text-secondary-foreground hover:bg-blue-100  hover:no-underline">
+              <span className="font-bold">Requisitos mínimos</span>
             </AccordionTrigger>
             <AccordionContent className="text-gray-500 data-[state=open]:text-gray-800 transition-colors duration-300">
               <ul className="space-y-3">

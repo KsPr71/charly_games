@@ -47,7 +47,7 @@ const formSchema = z.object({
   memory: z.string().optional(),
   graphics: z.string().optional(),
   storage: z.string().optional(),
-  weight: z.coerce.number().min(0).optional(),
+  weight: z.coerce.number().min(0.1).optional(),
 });
 type GameFormValues = z.infer<typeof formSchema>;
 
@@ -338,7 +338,7 @@ const precioCalculado = calcularPrecio(weightValue);
         <Input
   type="number"
   min={0}
-  step={1}
+  step={'any'}
   value={form.watch("weight") ?? ""}
   onChange={(e) => {
     const valor = Number(e.target.value);
