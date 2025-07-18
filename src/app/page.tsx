@@ -93,7 +93,7 @@ useEffect(() => {
   />
 </div>
         <div className="text-center">
-            <h1 className="mb-4 text-4xl font-bold font-headline py-5">CATÁLOGO DE JUEGOS</h1>
+            <h1 className="mb-4 text-4xl font-bold font-headline py-5">CATÁLOGO DE VIDEOJUEGOS</h1>
             <p className="mb-8 text-lg text-muted-foreground">
               Explora nuestra colección de juegos para PC.
             </p>
