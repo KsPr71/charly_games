@@ -232,7 +232,7 @@ useEffect(() => {
   `}</style>
 </div>
 
-<div className="fixed bottom-4 right-4 z-50 bg-green-500 p-3 md:p-4">
+<div className="fixed bottom-4 right-4 z-50 p-3 md:p-4">
   <WhatsAppFloatingButton/>
 </div>
 
