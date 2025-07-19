@@ -40,7 +40,7 @@ import { PriceEditor } from "@/components/price-editor";
 import { useRouter } from 'next/navigation';
 import { DollarSign } from "lucide-react";
 import { Lock } from "lucide-react";
-
+import ContactFormEditor from "@/components/ui/contactoActualizar";
 
 
 
@@ -108,6 +108,12 @@ import { Lock } from "lucide-react";
     <DollarSign className="inline-block mr-2 h-4 w-4 text-white-700" />
     Rangos de Precio
   </TabsTrigger>
+<TabsTrigger
+value= 'contacto'
+className='data-[state=active]:bg-blue-600 data-[state=active]:text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-200 transition'>
+Info de Admin
+</TabsTrigger>
+
       </TabsList>
       <TabsContent value="password">
           <Card>
@@ -159,6 +165,9 @@ import { Lock } from "lucide-react";
     </TabsContent>
       <TabsContent value="rangos">
       <PriceEditor />
+    </TabsContent>
+    <TabsContent value= 'contacto'>
+      <ContactFormEditor />
     </TabsContent>
   
   </Tabs>
@@ -233,7 +242,7 @@ import { Lock } from "lucide-react";
               onClick={handleAddNew}
             >
               <PlusCircle className="mr-2 h-4 w-4" />
-              Añadir Nuevo Juego
+              Nuevo
             </Button>
           </div>
         </div>

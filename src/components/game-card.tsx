@@ -32,6 +32,7 @@ import { cn } from "@/lib/utils";
 import {StarRating} from '../components/starRating';
 import { submitRating } from '../components/submitRating';
 import { getAverageRating } from '../components/getAverageRating';
+import { useContact } from '../context/ContactContext'
 
 interface GameCardProps {
   game: Game;
@@ -41,7 +42,8 @@ interface GameCardProps {
 
 
 export function GameCard({ game, onCardClick, onVote }: GameCardProps) {
-  const whatsappNumber = "+5352708602";
+  const { contactInfo, loading } = useContact()
+  const whatsappNumber = contactInfo?.telefono || "1111"; // Reemplaza con tu número de WhatsApp
   const message = encodeURIComponent(
     `Hola! Me interesa el juego ${game.title}. ¿Podrían darme más información?`
   );

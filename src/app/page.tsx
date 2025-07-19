@@ -15,6 +15,8 @@ import  Image  from 'next/image';
 import { getTopRatedGames } from '../components/topRated';
 import type { TopRatedGame } from '@/lib/types';
 import WhatsAppFloatingButton from '@/components/ui/botonW';
+import { ContactProvider } from '../context/ContactContext';
+import { useContact } from '../context/ContactContext';
 
 
 
@@ -33,6 +35,7 @@ export default function Home() {
   const [selectedGame, setSelectedGame] = useState<Game | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
 const [showSearchInput, setShowSearchInput] = useState(false);
+const { contactInfo, loading } = useContact();
 
   const recentGames = useMemo(() => {
     return games.slice(0, 5);
@@ -65,6 +68,7 @@ useEffect(() => {
 }, []);
 
   return (
+
     <div className="min-h-screen bg-gray-100">
       <div className="container mx-auto px-4 py-8 bg-gray-100">
 
@@ -271,5 +275,6 @@ useEffect(() => {
         }}
       />
     </div>
+    
   );
 }
