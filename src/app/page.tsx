@@ -17,6 +17,7 @@ import type { TopRatedGame } from "@/lib/types";
 import WhatsAppFloatingButton from "@/components/ui/botonW";
 import { ContactProvider } from "../context/ContactContext";
 import { useContact } from "../context/ContactContext";
+import { ProgressBar } from "@/components/ui/progress-bar";
 
 
 import {
@@ -70,6 +71,7 @@ const recentGames = useMemo(() => {
 
   return (
     <div className="min-h-screen bg-gray-100">
+      <ProgressBar isLoading={isLoading} />
       <div className="container mx-auto px-4 py-8 bg-gray-100">
         {/* Imagen base */}
         <div className="relative w-full h-[400px] overflow-hidden">
