@@ -86,7 +86,7 @@ export function GameDetailsDialog({
 
           {/* Requisitos del juego */}
 {/* Requisitos del juego */}
-<div className="border-2 border-r border-gray-800 bg-gray-800 rounded-md p-4">
+<div className="border-2 border-r border-gray-200 bg-gray-100 rounded-lg p-4">
   <h4 className="mb-4 text-xl font-semibold text-foreground">
     Requisitos Mínimos
   </h4>
@@ -142,7 +142,7 @@ export function GameDetailsDialog({
 
 <Separator className="my-6" />
 <div>
-<div className="flex justify-center"> {/* Contenedor principal centrado */}
+<div className="flex justify-center p-5"> {/* Contenedor principal centrado */}
   <div className="flex items-center gap-8 mt-6 p-5 bg-white/80 backdrop-blur-sm rounded-xl shadow-sm border border-gray-200">
     {/* Tamaño del archivo */}
     <div className="flex items-center gap-3">
@@ -158,7 +158,7 @@ export function GameDetailsDialog({
 
     {/* Precio */}
     <div className="flex items-center gap-3">
-      <span className="text-green-500 font-bold text-2xl">$</span>
+      <span className="text-green-500 font-bold text-2xl"></span>
       <div>
         <p className="text-base text-gray-500">Precio</p>
         <p className={`text-2xl font-bold ${game.price > 0 ? 'text-green-600' : 'text-purple-600'}`}>
