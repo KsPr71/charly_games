@@ -1,14 +1,31 @@
-import { MapPin, Phone } from 'lucide-react';
+'use client'
+import { MapPin, Phone, Instagram, Facebook} from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import Image from 'next/image';
+import { useContact } from '../../context/ContactContext';
+import { FaFacebook } from 'react-icons/fa';
 
 export default function ContactPage() {
-  const address = "Calle Central entre A y D La Mascota, Camagüey, Cuba";
-  const mobilePhone = "+53 5270 8602";
+
+  const { contactInfo, loading } = useContact();
+  
+  if (loading) {
+    return <div>Cargando información de contacto...</div>;
+  }
+
+  if (!contactInfo) {
+    return <div>No se pudo cargar la información de contacto</div>;
+  }
+
+  const address = contactInfo.direccion || "Dirección no disponible";
+
+  const mobilePhone = contactInfo.telefono;
   const mapEmbedUrl = "https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d919.8662423789417!2d-77.9381644056768!3d21.393271875462677!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMjHCsDIzJzM1LjgiTiA3N8KwNTYnMTcuNCJX!5e0!3m2!1ses!2ses!4v1721061925000!5m2!1ses!2ses";
+  const facebook = contactInfo.facebook;
+  const instagram = contactInfo.insta;
 
   return (
-    <div className='bg-gray-100'>
+    <div className='bg-white p-10'>
     <div className="flex justify-center items-center py-8"> 
       <Image
       src='/logo1.png'
@@ -17,7 +34,7 @@ export default function ContactPage() {
       height= {200}/>
     </div>
 
-    <div className="container mx-auto max-w-4xl px-4 py-12 p-10 bg-white rounded-lg shadow-md">
+    <div className="container mx-auto max-w-4xl px-4 py-12 p-10 bg-gray-100 border-1 rounded-lg shadow-md">
       <div className="text-center">
         <h1 className="mb-4 text-4xl font-bold font-headline">Contáctanos</h1>
         <p className="mb-12 text-lg text-muted-foreground">
@@ -54,6 +71,36 @@ export default function ContactPage() {
               </div>
             </CardContent>
           </Card>
+          <Card className='bg-blue-50'>
+            <CardHeader>
+              <CardTitle className='text-fuchsia-500'>Facebook</CardTitle>
+              <CardDescription>Localizanos en Facebook</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center gap-4">
+                <Facebook className="h-6 w-6 flex-shrink-0 text-primary" />
+                <a href={`${facebook.replace(/\s/g, '')}`} className="text-muted-foreground hover:text-primary">
+                  {facebook}
+                </a>
+              </div>
+            </CardContent>
+          </Card>
+
+                    <Card className='bg-blue-50'>
+            <CardHeader>
+              <CardTitle className='text-fuchsia-500'>Instagram</CardTitle>
+              <CardDescription>Siguenos en Instagram</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center gap-4">
+                <Instagram className="h-6 w-6 flex-shrink-0 text-primary" />
+                <a href={`${instagram.replace(/\s/g, '')}`} className="text-muted-foreground hover:text-primary">
+                  {instagram}
+                </a>
+              </div>
+            </CardContent>
+          </Card>
+
         </div>
 
         <div>

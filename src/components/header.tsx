@@ -10,6 +10,8 @@ import {
   Sheet,
   SheetContent,
   SheetTrigger,
+  SheetTitle,
+  SheetClose,
 } from "@/components/ui/sheet";
 import Image from 'next/image';
 
@@ -80,28 +82,52 @@ export function Header() {
         </nav>
         
         <div className="md:hidden">
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <Menu className="h-6 w-6" />
-                <span className="sr-only">Toggle Menu</span>
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="left">
-              <nav className="grid gap-6 text-lg font-medium p-4">
-                  <Link href="/" className="flex items-center gap-2 text-lg font-semibold">
-                      <Gamepad2 className="h-6 w-6 text-primary" />
-                       <span className="font-bold">
-                         <span className="text-primary">CHARLY</span><span className="text-accent">GAMES</span>
-                       </span>
-                  </Link>
-                  <Link href="/" className="text-muted-foreground hover:text-foreground">Catálogo</Link>
-                  <Link href="/contact" className="text-muted-foreground hover:text-foreground">Contacto</Link>
-                  <Link href="/admin" className="text-muted-foreground hover:text-foreground">Admin</Link>
-              </nav>
-            </SheetContent>
-          </Sheet>
-        </div>
+  <Sheet>
+    <SheetTrigger asChild>
+      <Button variant="ghost" size="icon">
+        <Menu className="h-6 w-6" />
+        <span className="sr-only">Abrir menú</span>
+      </Button>
+    </SheetTrigger>
+    <SheetContent side="left">
+      {/* 👇 Título obligatorio (puede estar oculto) */}
+      <SheetTitle className="sr-only">Menú principal</SheetTitle>
+      
+      <nav className="grid gap-6 text-lg font-medium p-4">
+
+      <SheetClose asChild>
+
+        <Link href="/" className="flex items-center gap-2 text-lg font-semibold">
+          <Gamepad2 className="h-6 w-6 text-primary" />
+          <span className="font-bold">
+            <span className="text-primary">CHARLY</span>
+            <span className="text-accent">GAMES</span>
+          </span>
+        </Link>
+
+      </SheetClose>
+      <SheetClose asChild>
+        <Link href="/" className="text-muted-foreground hover:text-foreground">
+          Catálogo
+        </Link>
+
+      </SheetClose>
+      <SheetClose asChild>
+
+        <Link href="/contact" className="text-muted-foreground hover:text-foreground">
+          Contacto
+        </Link>
+      </SheetClose>
+      <SheetClose asChild>
+
+        <Link href="/admin" className="text-muted-foreground hover:text-foreground">
+          Admin
+        </Link>
+      </SheetClose>
+      </nav>
+    </SheetContent>
+  </Sheet>
+</div>
       </div>
     </header>
   );

@@ -8,7 +8,7 @@ const supabase = createClient(supabaseUrl, supabaseAnonKey)
 export async function getContactData() {
   const { data, error } = await supabase
     .from('contacto')
-    .select('nombre, telefono, facebook, insta')
+    .select('nombre, telefono, facebook, insta, direccion')
     .single() // Si solo hay un registro de contacto
   
   if (error) {

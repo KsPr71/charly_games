@@ -17,7 +17,8 @@ export default function ContactFormEditor() {
     whatsapp: '',
     email: '',
     facebook: '',
-    insta: ''
+    insta: '',
+    direccion: ''
   });
   
   const [loading, setLoading] = useState(true);
@@ -110,7 +111,16 @@ export default function ContactFormEditor() {
             required
           />
         </div>
-
+        <div>
+          <Label htmlFor="direccion">Direccion</Label>
+          <Input
+            id="direccion"
+            name="direccion"
+            value={formData.direccion?? ""}
+            onChange={handleChange}
+            required
+          />
+        </div>
        
 
         <div>
