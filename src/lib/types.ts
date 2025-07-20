@@ -11,6 +11,7 @@ export interface Game{
   graphics?: string;
   storage?: string;
   weight?: number;
+   created_at: string; 
 }
 
 export interface TopRatedGame {

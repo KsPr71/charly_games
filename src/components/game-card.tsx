@@ -29,10 +29,10 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { cn } from "@/lib/utils";
-import {StarRating} from '../components/starRating';
-import { submitRating } from '../components/submitRating';
-import { getAverageRating } from '../components/getAverageRating';
-import { useContact } from '../context/ContactContext'
+import { StarRating } from "../components/starRating";
+import { submitRating } from "../components/submitRating";
+import { getAverageRating } from "../components/getAverageRating";
+import { useContact } from "../context/ContactContext";
 
 interface GameCardProps {
   game: Game;
@@ -40,10 +40,9 @@ interface GameCardProps {
   onVote?: () => void;
 }
 
-
 export function GameCard({ game, onCardClick, onVote }: GameCardProps) {
-  const { contactInfo, loading } = useContact()
-  const whatsappNumber = contactInfo?.telefono || "1111"; // Reemplaza con tu número de WhatsApp
+  const { contactInfo, loading } = useContact();
+  const whatsappNumber = contactInfo?.telefono || "5352708602"; // Reemplaza con tu número de WhatsApp
   const message = encodeURIComponent(
     `Hola! Me interesa el juego ${game.title}. ¿Podrían darme más información?`
   );
@@ -51,25 +50,23 @@ export function GameCard({ game, onCardClick, onVote }: GameCardProps) {
 
   const [isAccordionOpen, setIsAccordionOpen] = useState(false);
   const [showFull, setShowFull] = useState(false);
-    const [average, setAverage] = useState<number>(0);
-
+  const [average, setAverage] = useState<number>(0);
 
   useEffect(() => {
-  getAverageRating(game.id).then(setAverage);
-}, [game.id]);
+    getAverageRating(game.id).then(setAverage);
+  }, [game.id]);
 
-useEffect(() => {
-  getAverageRating(game.id).then((avg) => setAverage(avg ?? 0));
-}, [game.id]);
+  useEffect(() => {
+    getAverageRating(game.id).then((avg) => setAverage(avg ?? 0));
+  }, [game.id]);
 
+  const handleVote = async (value: number) => {
+    await submitRating(game.id, value);
+    const updated = await getAverageRating(game.id);
+    setAverage(updated);
 
-const handleVote = async (value: number) => {
-  await submitRating(game.id, value);
-  const updated = await getAverageRating(game.id);
-  setAverage(updated);
-
-  onVote?.(); // ← 🔁 Esto recalcula los Top Valorados en Home
-};
+    onVote?.(); // ← 🔁 Esto recalcula los Top Valorados en Home
+  };
 
   return (
     <Card className="flex h-full transform flex-col overflow-hidden rounded-lg shadow-lg transition-transform duration-300 hover:scale-105 hover:shadow-xl bg-white relative z-0">
@@ -96,26 +93,22 @@ const handleVote = async (value: number) => {
           <CardTitle className="mb-2 text-xl font-bold font-headline">
             {game.title}
           </CardTitle>
-<CardDescription
-  className={`mb-4 text-sm transition-all duration-300 ease-in-out ${
-    showFull ? "" : "line-clamp-4"
-  }`}
->
-  {game.description}
-</CardDescription>
+          <CardDescription
+            className={`mb-4 text-sm transition-all duration-300 ease-in-out ${
+              showFull ? "" : "line-clamp-4"
+            }`}
+          >
+            {game.description}
+          </CardDescription>
 
-{/* Mostrar estrellas afuera para que no se oculten */}
-<div className="px-4 pb-2">
-
-
-<StarRating
-  gameId={game.id}
-  initialAverage={average} // ← esta SÍ está definida arriba
-  onVoteComplete={onVote}
-/>
-
-
-</div>
+          {/* Mostrar estrellas afuera para que no se oculten */}
+          <div className="px-4 pb-2">
+            <StarRating
+              gameId={game.id}
+              initialAverage={average} // ← esta SÍ está definida arriba
+              onVoteComplete={onVote}
+            />
+          </div>
         </CardContent>
       </div>
 
