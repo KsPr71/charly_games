@@ -30,7 +30,8 @@ import {
 import { Separator } from "@/components/ui/separator";
 
 export default function Home() {
-  const { games, isLoading } = useContext(GameContext);
+  const { games, isLoading,} = useContext(GameContext);
+  const [progress, setProgress] = useState(0)
   const [selectedCategory, setSelectedCategory] = useState<string>("Todos");
   const [selectedGame, setSelectedGame] = useState<Game | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
@@ -71,7 +72,10 @@ const recentGames = useMemo(() => {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <ProgressBar isLoading={isLoading} />
+<ProgressBar 
+  isLoading={isLoading} 
+  progress={progress} 
+/>
       <div className="container mx-auto px-4 py-8 bg-gray-100">
         {/* Imagen base */}
         <div className="relative w-full h-[400px] overflow-hidden">
