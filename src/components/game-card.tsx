@@ -73,13 +73,19 @@ export function GameCard({ game, onCardClick, onVote }: GameCardProps) {
       <div onClick={onCardClick} className="cursor-pointer">
         <CardHeader className="p-0">
           <div className="relative w-full aspect-[3/2] rounded-t-lg overflow-hidden hover:scale-[1.02] hover:shadow-lg transition">
-            <Image
-              src={game.imageUrl}
-              alt={`Cover art for ${game.title}`}
-              fill
-              className="object-cover"
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            />
+            
+            { game.imageUrl ? (
+              <Image
+                src={game.imageUrl}
+                alt={`Cover art for ${game.title}`}
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              />
+            ) : (
+              <div> Imagen no disponible</div>
+            )
+            }
           </div>
         </CardHeader>
 
