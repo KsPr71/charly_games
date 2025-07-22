@@ -61,9 +61,15 @@ export function GameDetailsDialog({
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
         </div>
-          <DialogTitle className="text-3xl font-bold px-6 pt-4">
+          <DialogTitle className="text-3xl font-bold px-6 pt-4 p-5">
             {game.title}
           </DialogTitle>
+          <Badge
+            variant="secondary"
+            className="mb-2 w-fit bg-gray-200 ml-auto shadow-sm border border-gray-400"
+          >
+            {game.category}
+          </Badge>
           <DialogDescription className="px-6 text-lg text-muted-foreground">
             {game.description}
           </DialogDescription>
@@ -73,12 +79,6 @@ export function GameDetailsDialog({
 
         {/* 3. Contenido principal */}
         <div className="p-6 pt-4">
-          <Badge
-            variant="secondary"
-            className="mb-2 w-fit bg-gray-200 ml-auto shadow-sm border border-gray-400"
-          >
-            {game.category}
-          </Badge>
 
           <Separator className="my-6" />
           
