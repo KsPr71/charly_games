@@ -5,14 +5,6 @@ import type { Game } from '@/lib/types';
 import { GameContext } from '@/context/game-provider';
 import { Button } from '@/components/ui/button';
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -29,7 +21,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { GameForm } from '@/components/game-form';
-import { PlusCircle, MoreHorizontal, Edit, Trash2, KeyRound, LogOut } from 'lucide-react';
+import { PlusCircle, MoreHorizontal, Edit, Trash2, KeyRound, LogOut, ArrowUpDown } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -41,6 +33,7 @@ import { useRouter } from 'next/navigation';
 import { DollarSign, Lock } from "lucide-react";
 import ContactFormEditor from "@/components/ui/contactoActualizar";
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import DataTable from '@/components/Suscriptores';
 
 // Componente para cambiar contraseña con Supabase
 function SupabasePasswordChange() {
@@ -243,6 +236,10 @@ function AdminPanel() {
   const [gameToDelete, setGameToDelete] = useState<Game | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [showSearch, setShowSearch] = useState(false);
+  const [sortConfig, setSortConfig] = useState<{ key: keyof Game; direction: 'asc' | 'desc' }>({ 
+    key: 'title', 
+    direction: 'asc' 
+  });
   const supabase = createClientComponentClient();
   const router = useRouter();
 
@@ -274,9 +271,27 @@ function AdminPanel() {
     router.refresh();
   };
 
+  const requestSort = (key: keyof Game) => {
+    let direction: 'asc' | 'desc' = 'asc';
+    if (sortConfig.key === key && sortConfig.direction === 'asc') {
+      direction = 'desc';
+    }
+    setSortConfig({ key, direction });
+  };
+
   const filteredGames = games.filter((game) =>
     game.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const sortedGames = [...filteredGames].sort((a, b) => {
+    if (a[sortConfig.key] < b[sortConfig.key]) {
+      return sortConfig.direction === 'asc' ? -1 : 1;
+    }
+    if (a[sortConfig.key] > b[sortConfig.key]) {
+      return sortConfig.direction === 'asc' ? 1 : -1;
+    }
+    return 0;
+  });
 
   return (
     <>
@@ -303,7 +318,7 @@ function AdminPanel() {
             />
           </div>
           <Button 
-          variant= 'outline'
+            variant='outline'
             className="bg-white text-blue-500 hover:bg-blue-100"
             onClick={handleAddNew}
           >
@@ -322,34 +337,73 @@ function AdminPanel() {
       </div>
 
       <div className="overflow-hidden rounded-lg border shadow-sm">
-        <Table>
-          <TableHeader className='bg-fuchsia-800'>
-            <TableRow>
-              <TableHead className='font-bold text-white'>Título</TableHead>
-              <TableHead className='font-bold text-white'>Categoría</TableHead>
-              <TableHead className='font-bold text-white'>Precio</TableHead>
-              <TableHead className="text-right font-bold text-white">Acciones</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
+        <table className="min-w-full divide-y divide-gray-200">
+          <thead className="bg-fuchsia-800">
+            <tr>
+              <th 
+                className="px-6 py-3 text-left text-xs font-bold text-white uppercase tracking-wider cursor-pointer hover:bg-fuchsia-700 transition"
+                onClick={() => requestSort('title')}
+              >
+                <div className="flex items-center">
+                  Título
+                  <ArrowUpDown className="ml-1 h-3 w-3" />
+                  {sortConfig.key === 'title' && (
+                    <span className="ml-1">{sortConfig.direction === 'asc' ? '↑' : '↓'}</span>
+                  )}
+                </div>
+              </th>
+              <th 
+                className="px-6 py-3 text-left text-xs font-bold text-white uppercase tracking-wider cursor-pointer hover:bg-fuchsia-700 transition"
+                onClick={() => requestSort('category')}
+              >
+                <div className="flex items-center">
+                  Categoría
+                  <ArrowUpDown className="ml-1 h-3 w-3" />
+                  {sortConfig.key === 'category' && (
+                    <span className="ml-1">{sortConfig.direction === 'asc' ? '↑' : '↓'}</span>
+                  )}
+                </div>
+              </th>
+              <th 
+                className="px-6 py-3 text-left text-xs font-bold text-white uppercase tracking-wider cursor-pointer hover:bg-fuchsia-700 transition"
+                onClick={() => requestSort('price')}
+              >
+                <div className="flex items-center">
+                  Precio
+                  <ArrowUpDown className="ml-1 h-3 w-3" />
+                  {sortConfig.key === 'price' && (
+                    <span className="ml-1">{sortConfig.direction === 'asc' ? '↑' : '↓'}</span>
+                  )}
+                </div>
+              </th>
+              <th className="px-6 py-3 text-right text-xs font-bold text-white uppercase tracking-wider">
+                Acciones
+              </th>
+            </tr>
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-200">
             {isLoading ? (
               Array.from({ length: 5 }).map((_, index) => (
-                <TableRow key={index}>
-                  <TableCell><Skeleton className="h-5 w-32" /></TableCell>
-                  <TableCell><Skeleton className="h-5 w-24" /></TableCell>
-                  <TableCell><Skeleton className="h-5 w-16" /></TableCell>
-                  <TableCell className="text-right">
-                    <Skeleton className="h-8 w-8 ml-auto" />
-                  </TableCell>
-                </TableRow>
+                <tr key={index}>
+                  <td className="px-6 py-4 whitespace-nowrap"><Skeleton className="h-5 w-32" /></td>
+                  <td className="px-6 py-4 whitespace-nowrap"><Skeleton className="h-5 w-24" /></td>
+                  <td className="px-6 py-4 whitespace-nowrap"><Skeleton className="h-5 w-16" /></td>
+                  <td className="px-6 py-4 whitespace-nowrap text-right"><Skeleton className="h-8 w-8 ml-auto" /></td>
+                </tr>
               ))
             ) : (
-              filteredGames.map((game) => (
-                <TableRow key={game.id}>
-                  <TableCell className="font-medium">{game.title}</TableCell>
-                  <TableCell>{game.category}</TableCell>
-                  <TableCell>{game.price > 0 ? `$${game.price.toFixed(2)}` : 'Gratis'}</TableCell>
-                  <TableCell className="text-right">
+              sortedGames.map((game) => (
+                <tr key={game.id} className="hover:bg-gray-50">
+                  <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">
+                    {game.title}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-gray-600">
+                    {game.category}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-gray-600">
+                    {game.price > 0 ? `$${game.price.toFixed(2)}` : 'Gratis'}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-right">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button variant="ghost" className="h-8 w-8 p-0">
@@ -357,7 +411,7 @@ function AdminPanel() {
                           <MoreHorizontal className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className='bg-gray-100 shadow-xl border-gray-300'>
+                      <DropdownMenuContent align="end" className="bg-gray-100 shadow-xl border-gray-300">
                         <DropdownMenuItem onClick={() => handleEdit(game)}>
                           <Edit className="mr-2 h-4 w-4" />
                           <span>Editar</span>
@@ -371,49 +425,93 @@ function AdminPanel() {
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
-                  </TableCell>
-                </TableRow>
+                  </td>
+                </tr>
               ))
             )}
-          </TableBody>
-        </Table>
+          </tbody>
+        </table>
       </div>
 
       <Separator className="my-12" />
 
       <Tabs defaultValue="juegos" className="w-full">
-        <TabsList className="bg-blue-100 mb-4">
-          <TabsTrigger
-            value="password"
-            className="data-[state=active]:bg-blue-600 data-[state=active]:text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-200 transition"
-          >
-            <KeyRound className="inline mr-2 h-4 w-4" />
-            Cambiar Contraseña
-          </TabsTrigger>
-          <TabsTrigger
-            value="rangos"
-            className="data-[state=active]:bg-blue-600 data-[state=active]:text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-200 transition"
-          >
-            <DollarSign className="inline-block mr-2 h-4 w-4 text-white-700" />
-            Rangos de Precio
-          </TabsTrigger>
-          <TabsTrigger
-            value='contacto'
-            className='data-[state=active]:bg-blue-600 data-[state=active]:text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-200 transition'
-          >
-            Info de Admin
-          </TabsTrigger>
-        </TabsList>
-        <TabsContent value="password">
-          <SupabasePasswordChange />
-        </TabsContent>
-        <TabsContent value="rangos">
-          <PriceEditor />
-        </TabsContent>
-        <TabsContent value='contacto'>
-          <ContactFormEditor />
-        </TabsContent>
-      </Tabs>
+  <TabsList className="bg-transparent mb-6 p-0 gap-2">
+    <TabsTrigger
+      value="password"
+      className="
+        relative px-4 py-2 rounded-lg text-sm font-medium
+        bg-white text-gray-700 shadow-sm border border-gray-200
+        hover:bg-gray-50 hover:text-gray-900 transition-all
+        data-[state=active]:bg-fuchsia-600 data-[state=active]:text-white
+        data-[state=active]:border-fuchsia-600 data-[state=active]:shadow-md
+        group
+      "
+    >
+      <KeyRound className="inline mr-2 h-4 w-4 group-data-[state=active]:text-white" />
+      <span>Cambiar Contraseña</span>
+      <span className="absolute inset-x-0 bottom-0 h-0.5 bg-transparent group-data-[state=active]:bg-fuchsia-300 transition-all" />
+    </TabsTrigger>
+    <TabsTrigger
+      value="rangos"
+      className="
+        relative px-4 py-2 rounded-lg text-sm font-medium
+        bg-white text-gray-700 shadow-sm border border-gray-200
+        hover:bg-gray-50 hover:text-gray-900 transition-all
+        data-[state=active]:bg-fuchsia-600 data-[state=active]:text-white
+        data-[state=active]:border-fuchsia-600 data-[state=active]:shadow-md
+        group
+      "
+    >
+      <DollarSign className="inline mr-2 h-4 w-4 group-data-[state=active]:text-white" />
+      <span>Rangos de Precio</span>
+      <span className="absolute inset-x-0 bottom-0 h-0.5 bg-transparent group-data-[state=active]:bg-fuchsia-300 transition-all" />
+    </TabsTrigger>
+    <TabsTrigger
+      value='contacto'
+      className="
+        relative px-4 py-2 rounded-lg text-sm font-medium
+        bg-white text-gray-700 shadow-sm border border-gray-200
+        hover:bg-gray-50 hover:text-gray-900 transition-all
+        data-[state=active]:bg-fuchsia-600 data-[state=active]:text-white
+        data-[state=active]:border-fuchsia-600 data-[state=active]:shadow-md
+        group
+      "
+    >
+      <span>Info de Admin</span>
+      <span className="absolute inset-x-0 bottom-0 h-0.5 bg-transparent group-data-[state=active]:bg-fuchsia-300 transition-all" />
+    </TabsTrigger>
+    <TabsTrigger
+      value='suscriptores'
+      className="
+        relative px-4 py-2 rounded-lg text-sm font-medium
+        bg-white text-gray-700 shadow-sm border border-gray-200
+        hover:bg-gray-50 hover:text-gray-900 transition-all
+        data-[state=active]:bg-fuchsia-600 data-[state=active]:text-white
+        data-[state=active]:border-fuchsia-600 data-[state=active]:shadow-md
+        group
+      "
+    >
+      <span>Suscriptores</span>
+      <span className="absolute inset-x-0 bottom-0 h-0.5 bg-transparent group-data-[state=active]:bg-fuchsia-300 transition-all" />
+    </TabsTrigger>
+  </TabsList>
+
+  <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+    <TabsContent value="password">
+      <SupabasePasswordChange />
+    </TabsContent>
+    <TabsContent value="rangos">
+      <PriceEditor />
+    </TabsContent>
+    <TabsContent value='contacto'>
+      <ContactFormEditor />
+    </TabsContent>
+    <TabsContent value='suscriptores'>
+      <DataTable/>
+    </TabsContent>
+  </div>
+</Tabs>
 
       <GameForm
         isOpen={isFormOpen}

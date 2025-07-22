@@ -78,6 +78,7 @@ export function Header() {
         <nav className="hidden items-center space-x-6 text-sm font-medium md:flex">
             <NavLink href="/">Catálogo</NavLink>
             <NavLink href="/contact">Contacto</NavLink>
+            <NavLink href="/suscribe">Suscribete</NavLink>
             <NavLink href="/admin">Admin</NavLink>
         </nav>
         
@@ -111,6 +112,12 @@ export function Header() {
           Catálogo
         </Link>
 
+      </SheetClose>
+      <SheetClose asChild>
+
+        <Link href="/suscribe" className="text-muted-foreground hover:text-foreground">
+          Suscribete
+        </Link>
       </SheetClose>
       <SheetClose asChild>
 
