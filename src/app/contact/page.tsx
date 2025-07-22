@@ -25,16 +25,16 @@ export default function ContactPage() {
   const instagram = contactInfo.insta;
 
   return (
-    <div className='bg-white p-10'>
+    <div className='bg-gray-50 p-10'>
+
+    <div className="container mx-auto max-w-4xl px-4 py-12 p-10 bg-white border-1 rounded-lg shadow-md">
     <div className="flex justify-center items-center py-8"> 
       <Image
-      src='/logo1.png'
+      src='/logo.png'
       alt= 'CharlyGames'
       width= {200}
       height= {200}/>
     </div>
-
-    <div className="container mx-auto max-w-4xl px-4 py-12 p-10 bg-gray-100 border-1 rounded-lg shadow-md">
       <div className="text-center">
         <h1 className="mb-4 text-4xl font-bold font-headline">Contáctanos</h1>
         <p className="mb-12 text-lg text-muted-foreground">

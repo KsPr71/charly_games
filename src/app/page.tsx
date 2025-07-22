@@ -91,7 +91,7 @@ const recentGames = useMemo(() => {
 
           {/* Imagen encima */}
           <Image
-            src="/logo1.png"
+            src="/logo.png"
             alt="Banner encima"
             width={200}
             height={200}

@@ -56,6 +56,7 @@ interface GameFormProps {
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
   game?: Game;
+  className?: string;
 }
 
 
