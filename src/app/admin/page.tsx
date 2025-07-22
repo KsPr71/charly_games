@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
-import { useState, useContext, useEffect } from 'react';
-import type { Game } from '@/lib/types';
-import { GameContext } from '@/context/game-provider';
-import { Button } from '@/components/ui/button';
+import { useState, useContext, useEffect } from "react";
+import type { Game } from "@/lib/types";
+import { GameContext } from "@/context/game-provider";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from "@/components/ui/dropdown-menu";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -19,160 +19,76 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
-import { GameForm } from '@/components/game-form';
-import { PlusCircle, MoreHorizontal, Edit, Trash2, KeyRound, LogOut, ArrowUpDown } from 'lucide-react';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Separator } from '@/components/ui/separator';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+} from "@/components/ui/alert-dialog";
+import { GameForm } from "@/components/game-form";
+import {
+  PlusCircle,
+  MoreHorizontal,
+  Edit,
+  Trash2,
+  KeyRound,
+  LogOut,
+  ArrowUpDown,
+  Mail,
+  Users,
+  Settings,
+  Lock,
+} from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Separator } from "@/components/ui/separator";
 import { PriceEditor } from "@/components/price-editor";
-import { useRouter } from 'next/navigation';
-import { DollarSign, Lock } from "lucide-react";
-import ContactFormEditor from "@/components/ui/contactoActualizar";
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import DataTable from '@/components/Suscriptores';
-import {ResponsiveTabs} from '../../components/ui/ResponsiveTabs'
-
-// Componente para cambiar contraseña con Supabase
-function SupabasePasswordChange() {
-  const [currentPassword, setCurrentPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
-  const [loading, setLoading] = useState(false);
-  const supabase = createClientComponentClient();
-
-  const handlePasswordUpdate = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
-    setSuccess('');
-    setLoading(true);
-
-    if (newPassword !== confirmPassword) {
-      setError('Las contraseñas no coinciden');
-      setLoading(false);
-      return;
-    }
-
-    try {
-      // Verificar contraseña actual
-      const { error: authError } = await supabase.auth.signInWithPassword({
-        email: (await supabase.auth.getUser()).data.user?.email || '',
-        password: currentPassword,
-      });
-
-      if (authError) throw new Error('Contraseña actual incorrecta');
-
-      // Actualizar contraseña
-      const { error: updateError } = await supabase.auth.updateUser({
-        password: newPassword,
-      });
-
-      if (updateError) throw updateError;
-
-      setSuccess('Contraseña actualizada correctamente');
-      setCurrentPassword('');
-      setNewPassword('');
-      setConfirmPassword('');
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error al actualizar la contraseña');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Cambiar Contraseña</CardTitle>
-        <CardDescription>Actualiza tu contraseña de administrador.</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handlePasswordUpdate} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="current-password">Contraseña Actual</Label>
-            <Input
-              id="current-password"
-              type="password"
-              value={currentPassword}
-              onChange={(e) => setCurrentPassword(e.target.value)}
-              required
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="new-password">Nueva Contraseña</Label>
-            <Input
-              id="new-password"
-              type="password"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-              required
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="confirm-password">Confirmar Nueva Contraseña</Label>
-            <Input
-              id="confirm-password"
-              type="password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              required
-            />
-          </div>
-          {error && <p className="text-sm text-destructive">{error}</p>}
-          {success && <p className="text-sm text-green-600">{success}</p>}
-          <Button type="submit" disabled={loading}>
-            <KeyRound className="mr-2 h-4 w-4" />
-            {loading ? 'Actualizando...' : 'Cambiar Contraseña'}
-          </Button>
-        </form>
-      </CardContent>
-    </Card>
-  );
-}
+import { useRouter } from "next/navigation";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import Link from "next/link";
 
 // Componente de formulario de autenticación con Supabase
 function SupabaseAuth({ onSuccess }: { onSuccess: () => void }) {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const supabase = createClientComponentClient();
   const router = useRouter();
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setError("");
     setLoading(true);
 
     try {
-      const { data, error: authError } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+      const { data, error: authError } = await supabase.auth.signInWithPassword(
+        {
+          email,
+          password,
+        }
+      );
 
       if (authError) throw authError;
 
-      // Verificar si el usuario es admin
       const { data: adminData, error: adminError } = await supabase
-        .from('admin_users')
-        .select('id')
-        .eq('id', data.user?.id)
+        .from("admin_users")
+        .select("id")
+        .eq("id", data.user?.id)
         .single();
 
       if (adminError || !adminData) {
         await supabase.auth.signOut();
-        throw new Error('No tienes permisos de administrador');
+        throw new Error("No tienes permisos de administrador");
       }
 
       onSuccess();
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error de autenticación');
+      setError(err instanceof Error ? err.message : "Error de autenticación");
     } finally {
       setLoading(false);
     }
@@ -215,12 +131,12 @@ function SupabaseAuth({ onSuccess }: { onSuccess: () => void }) {
               />
             </div>
             {error && <p className="text-sm text-destructive">{error}</p>}
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-md transition"
               disabled={loading}
             >
-              {loading ? 'Verificando...' : 'Iniciar Sesión'}
+              {loading ? "Verificando..." : "Iniciar Sesión"}
             </Button>
           </form>
         </CardContent>
@@ -237,9 +153,12 @@ function AdminPanel() {
   const [gameToDelete, setGameToDelete] = useState<Game | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [showSearch, setShowSearch] = useState(false);
-  const [sortConfig, setSortConfig] = useState<{ key: keyof Game; direction: 'asc' | 'desc' }>({ 
-    key: 'title', 
-    direction: 'asc' 
+  const [sortConfig, setSortConfig] = useState<{
+    key: keyof Game;
+    direction: "asc" | "desc";
+  }>({
+    key: "title",
+    direction: "asc",
   });
   const supabase = createClientComponentClient();
   const router = useRouter();
@@ -273,9 +192,9 @@ function AdminPanel() {
   };
 
   const requestSort = (key: keyof Game) => {
-    let direction: 'asc' | 'desc' = 'asc';
-    if (sortConfig.key === key && sortConfig.direction === 'asc') {
-      direction = 'desc';
+    let direction: "asc" | "desc" = "asc";
+    if (sortConfig.key === key && sortConfig.direction === "asc") {
+      direction = "desc";
     }
     setSortConfig({ key, direction });
   };
@@ -286,225 +205,203 @@ function AdminPanel() {
 
   const sortedGames = [...filteredGames].sort((a, b) => {
     if (a[sortConfig.key] < b[sortConfig.key]) {
-      return sortConfig.direction === 'asc' ? -1 : 1;
+      return sortConfig.direction === "asc" ? -1 : 1;
     }
     if (a[sortConfig.key] > b[sortConfig.key]) {
-      return sortConfig.direction === 'asc' ? 1 : -1;
+      return sortConfig.direction === "asc" ? 1 : -1;
     }
     return 0;
   });
 
-  return (
-    <>
-      <div className="mb-6 flex flex-wrap items-center justify-between p-3 gap-2 shadow-sm rounded-lg">
-        <h1 className="text-3xl font-bold font-headline">Panel de Administración</h1>
-        <div className="flex gap-2 items-center">
-          <div className="relative flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => setShowSearch(!showSearch)}
-              className="rounded-full bg-blue-600 text-white p-2 hover:bg-blue-700 transition"
-              title="Buscar juego"
-            >
-              <span className="text-lg font-bold">?</span>
-            </button>
-            <input
-              type="text"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Buscar por título..."
-              className={`transition-all duration-300 ease-in-out text-sm p-2 rounded-md bg-white border border-gray-300 shadow-sm ${
-                showSearch ? "w-48 opacity-100 ml-2" : "w-0 opacity-0 ml-0 overflow-hidden"
-              }`}
-            />
-          </div>
-          <Button 
-            variant='outline'
-            className="bg-white text-blue-500 hover:bg-blue-100"
-            onClick={handleAddNew}
+ return (
+  <div className="w-full max-w-[100vw] overflow-x-hidden px-4 relative">
+    {/* Header y controles */}
+    <div className="mb-6 flex flex-wrap items-center justify-between p-3 gap-2 shadow-sm rounded-lg">
+      <h1 className="text-2xl md:text-3xl font-bold font-headline">Panel de Administración</h1>
+      <div className="flex gap-2 items-center">
+        <div className="relative flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setShowSearch(!showSearch)}
+            className="rounded-full bg-blue-600 text-white p-2 hover:bg-blue-700 transition"
+            title="Buscar juego"
           >
-            <PlusCircle className="mr-2 h-4 w-4" />
-            Nuevo
-          </Button>
-          <Button 
-            variant="outline"
-            onClick={handleLogout}
-            className="text-fuchsia-600 hover:hover:bg-fuchsia-100"
-          >
-            <LogOut className="mr-2 h-4 w-4" />
-            Salir
-          </Button>
+            <span className="text-lg font-bold">?</span>
+          </button>
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Buscar por título..."
+            className={`transition-all duration-300 ease-in-out text-sm p-2 rounded-md bg-white border border-gray-300 shadow-sm ${
+              showSearch ? "w-48 opacity-100 ml-2" : "w-0 opacity-0 ml-0 overflow-hidden"
+            }`}
+          />
         </div>
+        <Button 
+          variant='outline'
+          className="bg-white text-blue-500 hover:bg-blue-100"
+          onClick={handleAddNew}
+        >
+          <PlusCircle className="h-4 w-4" />
+        </Button>
+        
+        <Button 
+          asChild
+          variant="outline"
+          className="bg-white text-emerald-600 hover:bg-emerald-100"
+        >
+          <Link href="/admin/settings">
+            <Settings className="h-4 w-4" />
+          </Link>
+        </Button>
+
+        <Button 
+          variant="outline"
+          onClick={handleLogout}
+          className="text-fuchsia-600 hover:bg-fuchsia-100"
+        >
+          <LogOut className="h-4 w-4" />
+        </Button>
       </div>
+    </div>
 
-      <div className="overflow-x-auto">
-  <div className="min-w-[600px] md:min-w-0"> {/* Forza el ancho mínimo en móviles */}
-    <table className="w-full divide-y divide-gray-200">
-      <thead className="bg-fuchsia-800">
-        <tr>
-          <th 
-            className="px-3 py-3 text-left text-xs font-bold text-white uppercase tracking-wider cursor-pointer hover:bg-fuchsia-700 transition"
-            onClick={() => requestSort('title')}
-          >
-            <div className="flex items-center">
-              Título
-              <ArrowUpDown className="ml-1 h-3 w-3" />
-              {sortConfig.key === 'title' && (
-                <span className="ml-1 text-xs">{sortConfig.direction === 'asc' ? '↑' : '↓'}</span>
-              )}
-            </div>
-          </th>
-          <th 
-            className="px-3 py-3 text-left text-xs font-bold text-white uppercase tracking-wider cursor-pointer hover:bg-fuchsia-700 transition"
-            onClick={() => requestSort('category')}
-          >
-            <div className="flex items-center">
-              Categoría
-              <ArrowUpDown className="ml-1 h-3 w-3" />
-              {sortConfig.key === 'category' && (
-                <span className="ml-1 text-xs">{sortConfig.direction === 'asc' ? '↑' : '↓'}</span>
-              )}
-            </div>
-          </th>
-          <th 
-            className="px-3 py-3 text-left text-xs font-bold text-white uppercase tracking-wider cursor-pointer hover:bg-fuchsia-700 transition"
-            onClick={() => requestSort('price')}
-          >
-            <div className="flex items-center">
-              Precio
-              <ArrowUpDown className="ml-1 h-3 w-3" />
-              {sortConfig.key === 'price' && (
-                <span className="ml-1 text-xs">{sortConfig.direction === 'asc' ? '↑' : '↓'}</span>
-              )}
-            </div>
-          </th>
-          <th className="px-3 py-3 text-right text-xs font-bold text-white uppercase tracking-wider">
-            Acciones
-          </th>
-        </tr>
-      </thead>
-      <tbody className="bg-white divide-y divide-gray-200">
-        {isLoading ? (
-          Array.from({ length: 5 }).map((_, index) => (
-            <tr key={index}>
-              <td className="px-3 py-4 whitespace-nowrap"><Skeleton className="h-5 w-32" /></td>
-              <td className="px-3 py-4 whitespace-nowrap"><Skeleton className="h-5 w-24" /></td>
-              <td className="px-3 py-4 whitespace-nowrap"><Skeleton className="h-5 w-16" /></td>
-              <td className="px-3 py-4 whitespace-nowrap text-right"><Skeleton className="h-8 w-8 ml-auto" /></td>
+    {/* Tabla de juegos */}
+    <div className="overflow-x-auto">
+      <div className="min-w-[600px] md:min-w-0">
+        <table className="w-full divide-y divide-gray-200">
+          <thead className="bg-fuchsia-800">
+            <tr>
+              <th 
+                className="px-3 py-3 text-left text-xs font-bold text-white uppercase tracking-wider cursor-pointer hover:bg-fuchsia-700 transition"
+                onClick={() => requestSort('title')}
+              >
+                <div className="flex items-center">
+                  Título
+                  <ArrowUpDown className="ml-1 h-3 w-3" />
+                  {sortConfig.key === 'title' && (
+                    <span className="ml-1 text-xs">{sortConfig.direction === 'asc' ? '↑' : '↓'}</span>
+                  )}
+                </div>
+              </th>
+              <th 
+                className="px-3 py-3 text-left text-xs font-bold text-white uppercase tracking-wider cursor-pointer hover:bg-fuchsia-700 transition"
+                onClick={() => requestSort('category')}
+              >
+                <div className="flex items-center">
+                  Categoría
+                  <ArrowUpDown className="ml-1 h-3 w-3" />
+                  {sortConfig.key === 'category' && (
+                    <span className="ml-1 text-xs">{sortConfig.direction === 'asc' ? '↑' : '↓'}</span>
+                  )}
+                </div>
+              </th>
+              <th 
+                className="px-3 py-3 text-left text-xs font-bold text-white uppercase tracking-wider cursor-pointer hover:bg-fuchsia-700 transition"
+                onClick={() => requestSort('price')}
+              >
+                <div className="flex items-center">
+                  Precio
+                  <ArrowUpDown className="ml-1 h-3 w-3" />
+                  {sortConfig.key === 'price' && (
+                    <span className="ml-1 text-xs">{sortConfig.direction === 'asc' ? '↑' : '↓'}</span>
+                  )}
+                </div>
+              </th>
+              <th className="px-3 py-3 text-right text-xs font-bold text-white uppercase tracking-wider">
+                Acciones
+              </th>
             </tr>
-          ))
-        ) : (
-          sortedGames.map((game) => (
-            <tr key={game.id} className="hover:bg-gray-50">
-              <td className="px-3 py-4 whitespace-nowrap font-medium text-gray-900">
-                <span className="md:hidden font-bold">Título: </span>
-                {game.title}
-              </td>
-              <td className="px-3 py-4 whitespace-nowrap text-gray-600">
-                <span className="md:hidden font-bold">Categoría: </span>
-                {game.category}
-              </td>
-              <td className="px-3 py-4 whitespace-nowrap text-gray-600">
-                <span className="md:hidden font-bold">Precio: </span>
-                {game.price > 0 ? `$${game.price.toFixed(2)}` : 'Gratis'}
-              </td>
-              <td className="px-3 py-4 whitespace-nowrap text-right">
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="h-8 w-8 p-0">
-                      <span className="sr-only">Abrir menú</span>
-                      <MoreHorizontal className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="bg-gray-100 shadow-xl border-gray-300">
-                    <DropdownMenuItem onClick={() => handleEdit(game)}>
-                      <Edit className="mr-2 h-4 w-4" />
-                      <span>Editar</span>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => handleDeleteClick(game)}
-                      className="text-red-600"
-                    >
-                      <Trash2 className="mr-2 h-4 w-4" />
-                      <span>Eliminar</span>
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </td>
-            </tr>
-          ))
-        )}
-      </tbody>
-    </table>
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-200">
+            {isLoading ? (
+              Array.from({ length: 5 }).map((_, index) => (
+                <tr key={index}>
+                  <td className="px-3 py-4 whitespace-nowrap"><Skeleton className="h-5 w-32" /></td>
+                  <td className="px-3 py-4 whitespace-nowrap"><Skeleton className="h-5 w-24" /></td>
+                  <td className="px-3 py-4 whitespace-nowrap"><Skeleton className="h-5 w-16" /></td>
+                  <td className="px-3 py-4 whitespace-nowrap text-right"><Skeleton className="h-8 w-8 ml-auto" /></td>
+                </tr>
+              ))
+            ) : (
+              sortedGames.map((game) => (
+                <tr key={game.id} className="hover:bg-gray-50">
+                  <td className="px-3 py-4 whitespace-nowrap font-medium text-gray-900">
+                    {game.title}
+                  </td>
+                  <td className="px-3 py-4 whitespace-nowrap text-gray-600">
+                    {game.category}
+                  </td>
+                  <td className="px-3 py-4 whitespace-nowrap text-gray-600">
+                    {game.price > 0 ? `$${game.price.toFixed(2)}` : 'Gratis'}
+                  </td>
+                  <td className="px-3 py-4 whitespace-nowrap text-right">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="h-8 w-8 p-0">
+                          <span className="sr-only">Abrir menú</span>
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent 
+                        align="end"
+                        side="left"
+                        className="bg-gray-100 shadow-xl border-gray-300 min-w-[150px]"
+                        sideOffset={5}
+                        collisionPadding={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                      >
+                        <DropdownMenuItem onClick={() => handleEdit(game)}>
+                          <Edit className="mr-2 h-4 w-4" />
+                          <span>Editar</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => handleDeleteClick(game)}
+                          className="text-red-600"
+                        >
+                          <Trash2 className="mr-2 h-4 w-4" />
+                          <span>Eliminar</span>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <Separator className="my-6 md:my-12" />
+
+    <GameForm
+      isOpen={isFormOpen}
+      setIsOpen={setIsFormOpen}
+      game={selectedGame}
+      className="fixed inset-0 overflow-auto sm:inset-auto sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2"
+    />
+
+    <AlertDialog open={isAlertOpen} onOpenChange={setIsAlertOpen}>
+      <AlertDialogContent className="w-[calc(100vw-2rem)] max-w-md fixed inset-0 m-auto h-fit max-h-[90vh] overflow-auto sm:relative sm:inset-auto sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2">
+        <AlertDialogHeader>
+          <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
+          <AlertDialogDescription>
+            Esta acción no se puede deshacer. Esto eliminará permanentemente el juego "{gameToDelete?.title}" de tu catálogo.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancelar</AlertDialogCancel>
+          <AlertDialogAction
+            onClick={handleDeleteConfirm}
+            className="bg-destructive hover:bg-destructive/90"
+          >
+            Eliminar
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   </div>
-</div>
-
-      <Separator className="my-12" />
-
-<ResponsiveTabs 
-  defaultValue="juegos"
-  tabs={[
-    {
-      value: "password",
-      label: "Cambiar Contraseña",
-      icon: <KeyRound className="inline mr-2 h-4 w-4" />
-    },
-    {
-      value: "rangos",
-      label: "Rangos de Precio",
-      icon: <DollarSign className="inline mr-2 h-4 w-4" />
-    },
-    {
-      value: 'contacto',
-      label: 'Info de Admin'
-    },
-    {
-      value: 'suscriptores',
-      label: 'Suscriptores'
-    }
-  ]}
->
-  <TabsContent value="password">
-    <SupabasePasswordChange />
-  </TabsContent>
-  <TabsContent value="rangos">
-    <PriceEditor />
-  </TabsContent>
-  <TabsContent value='contacto'>
-    <ContactFormEditor />
-  </TabsContent>
-  <TabsContent value='suscriptores'>
-    <DataTable/>
-  </TabsContent>
-</ResponsiveTabs>
-
-      <GameForm
-        isOpen={isFormOpen}
-        setIsOpen={setIsFormOpen}
-        game={selectedGame}
-      />
-
-      <AlertDialog open={isAlertOpen} onOpenChange={setIsAlertOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
-            <AlertDialogDescription>
-              Esta acción no se puede deshacer. Esto eliminará permanentemente el juego "{gameToDelete?.title}" de tu catálogo.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleDeleteConfirm}
-              className="bg-destructive hover:bg-destructive/90"
-            >
-              Eliminar
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </>
-  );
+);
 }
 
 export default function AdminPage() {
@@ -515,13 +412,14 @@ export default function AdminPage() {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
         if (session) {
-          // Verificar si el usuario es admin
           const { data: adminData } = await supabase
-            .from('admin_users')
-            .select('id')
-            .eq('id', session.user.id)
+            .from("admin_users")
+            .select("id")
+            .eq("id", session.user.id)
             .single();
 
           if (adminData) {
@@ -531,7 +429,7 @@ export default function AdminPage() {
           }
         }
       } catch (error) {
-        console.error('Error checking auth:', error);
+        console.error("Error checking auth:", error);
       } finally {
         setLoading(false);
       }
@@ -539,10 +437,12 @@ export default function AdminPage() {
 
     checkAuth();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_IN') {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "SIGNED_IN") {
         setIsAuthenticated(true);
-      } else if (event === 'SIGNED_OUT') {
+      } else if (event === "SIGNED_OUT") {
         setIsAuthenticated(false);
       }
     });
@@ -559,7 +459,7 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="container mx-auto px-5 py-8">
+    <div className="mx-auto w-full max-w-[100vw] overflow-x-hidden px-4 py-8">
       {isAuthenticated ? (
         <AdminPanel />
       ) : (

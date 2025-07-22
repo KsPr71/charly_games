@@ -1,4 +1,3 @@
-// components/ProfessionalDataTable.js
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 
@@ -15,15 +14,13 @@ export default function ProfessionalDataTable() {
       try {
         let query = supabase
           .from('users')
-          .select('name, email, whatssapp'); // Cambiado de 'nombre' a 'name'
+          .select('name, email, whatssapp');
 
-        // Aplicar ordenamiento
         query = query.order(sortConfig.key, { ascending: sortConfig.direction === 'asc' });
 
         const { data: tableData, error } = await query;
 
         if (error) throw error;
-        
         setData(tableData);
       } catch (err) {
         setError(err.message);
@@ -43,7 +40,6 @@ export default function ProfessionalDataTable() {
     setSortConfig({ key, direction });
   };
 
-  // Paginación
   const totalPages = Math.ceil(data.length / itemsPerPage);
   const currentItems = data.slice(
     (currentPage - 1) * itemsPerPage,
@@ -65,68 +61,41 @@ export default function ProfessionalDataTable() {
 
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden">
-      <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gradient-to-r from-blue-600 to-blue-500">
-            <tr>
-              <th 
-                className="px-6 py-4 text-left text-xs font-medium text-white uppercase tracking-wider cursor-pointer hover:bg-blue-700 transition duration-150"
-                onClick={() => requestSort('name')} // Cambiado de 'nombre' a 'name'
-              >
-                Name
-                {sortConfig.key === 'name' && (
-                  <span className="ml-1">
-                    {sortConfig.direction === 'asc' ? '↑' : '↓'}
-                  </span>
-                )}
-              </th>
-              <th 
-                className="px-6 py-4 text-left text-xs font-medium text-white uppercase tracking-wider cursor-pointer hover:bg-blue-700 transition duration-150"
-                onClick={() => requestSort('email')}
-              >
-                Email
-                {sortConfig.key === 'email' && (
-                  <span className="ml-1">
-                    {sortConfig.direction === 'asc' ? '↑' : '↓'}
-                  </span>
-                )}
-              </th>
-              <th 
-                className="px-6 py-4 text-left text-xs font-medium text-white uppercase tracking-wider cursor-pointer hover:bg-blue-700 transition duration-150"
-                onClick={() => requestSort('whatssapp')}
-              >
-                WhatsApp
-                {sortConfig.key === 'whatssapp' && (
-                  <span className="ml-1">
-                    {sortConfig.direction === 'asc' ? '↑' : '↓'}
-                  </span>
-                )}
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {currentItems.map((item, index) => (
-              <tr 
-                key={index} 
-                className="hover:bg-gray-50 transition duration-150"
-              >
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm font-medium text-gray-900">{item.name}</div> {/* Cambiado de 'nombre' a 'name' */}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm text-gray-600">{item.email}</div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm text-gray-600">
-                    {item.whatssapp || (
-                      <span className="text-gray-400">No proporcionado</span>
-                    )}
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      {/* Contenedor para scroll horizontal */}
+      <div className="relative">
+        <div className="overflow-x-auto overflow-y-hidden">
+          <div className="inline-block min-w-full align-middle">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gradient-to-r from-blue-600 to-blue-500">
+                <tr>
+                  <th 
+                    className="sticky top-0 px-6 py-4 text-left text-xs font-medium text-white uppercase tracking-wider cursor-pointer hover:bg-blue-700 transition duration-150"
+                    onClick={() => requestSort('name')}
+                  >Name{sortConfig.key === 'name' && <span className="ml-1">{sortConfig.direction === 'asc' ? '↑' : '↓'}</span>}</th>
+                  <th 
+                    className="sticky top-0 px-6 py-4 text-left text-xs font-medium text-white uppercase tracking-wider cursor-pointer hover:bg-blue-700 transition duration-150"
+                    onClick={() => requestSort('email')}
+                  >Email{sortConfig.key === 'email' && <span className="ml-1">{sortConfig.direction === 'asc' ? '↑' : '↓'}</span>}</th>
+                  <th 
+                    className="sticky top-0 px-6 py-4 text-left text-xs font-medium text-white uppercase tracking-wider cursor-pointer hover:bg-blue-700 transition duration-150"
+                    onClick={() => requestSort('whatssapp')}
+                  >WhatsApp{sortConfig.key === 'whatssapp' && <span className="ml-1">{sortConfig.direction === 'asc' ? '↑' : '↓'}</span>}</th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {currentItems.map((item, index) => (
+                  <tr key={index} className="hover:bg-gray-50 transition duration-150">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{item.name}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{item.email}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                      {item.whatssapp || <span className="text-gray-400">No proporcionado</span>}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
 
       {/* Paginación */}
@@ -135,11 +104,11 @@ export default function ProfessionalDataTable() {
           <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
             <div>
               <p className="text-sm text-gray-700">
-                Showing <span className="font-medium">{(currentPage - 1) * itemsPerPage + 1}</span> to{' '}
+                Mostrando <span className="font-medium">{(currentPage - 1) * itemsPerPage + 1}</span> a{' '}
                 <span className="font-medium">
                   {Math.min(currentPage * itemsPerPage, data.length)}
                 </span>{' '}
-                of <span className="font-medium">{data.length}</span> results
+                de <span className="font-medium">{data.length}</span> resultados
               </p>
             </div>
             <div>
@@ -149,7 +118,7 @@ export default function ProfessionalDataTable() {
                   disabled={currentPage === 1}
                   className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50"
                 >
-                  <span className="sr-only">Previous</span>
+                  <span className="sr-only">Anterior</span>
                   &larr;
                 </button>
                 {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
@@ -170,7 +139,7 @@ export default function ProfessionalDataTable() {
                   disabled={currentPage === totalPages}
                   className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50"
                 >
-                  <span className="sr-only">Next</span>
+                  <span className="sr-only">Siguiente</span>
                   &rarr;
                 </button>
               </nav>

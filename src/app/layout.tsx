@@ -6,6 +6,7 @@ import { GameProvider } from '@/context/game-provider';
 import { ContactProvider } from '../context/ContactContext';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
+export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   title: 'CHARLY GAMES',
