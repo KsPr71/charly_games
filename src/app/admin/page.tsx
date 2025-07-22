@@ -336,102 +336,107 @@ function AdminPanel() {
         </div>
       </div>
 
-      <div className="overflow-hidden rounded-lg border shadow-sm">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-fuchsia-800">
-            <tr>
-              <th 
-                className="px-6 py-3 text-left text-xs font-bold text-white uppercase tracking-wider cursor-pointer hover:bg-fuchsia-700 transition"
-                onClick={() => requestSort('title')}
-              >
-                <div className="flex items-center">
-                  Título
-                  <ArrowUpDown className="ml-1 h-3 w-3" />
-                  {sortConfig.key === 'title' && (
-                    <span className="ml-1">{sortConfig.direction === 'asc' ? '↑' : '↓'}</span>
-                  )}
-                </div>
-              </th>
-              <th 
-                className="px-6 py-3 text-left text-xs font-bold text-white uppercase tracking-wider cursor-pointer hover:bg-fuchsia-700 transition"
-                onClick={() => requestSort('category')}
-              >
-                <div className="flex items-center">
-                  Categoría
-                  <ArrowUpDown className="ml-1 h-3 w-3" />
-                  {sortConfig.key === 'category' && (
-                    <span className="ml-1">{sortConfig.direction === 'asc' ? '↑' : '↓'}</span>
-                  )}
-                </div>
-              </th>
-              <th 
-                className="px-6 py-3 text-left text-xs font-bold text-white uppercase tracking-wider cursor-pointer hover:bg-fuchsia-700 transition"
-                onClick={() => requestSort('price')}
-              >
-                <div className="flex items-center">
-                  Precio
-                  <ArrowUpDown className="ml-1 h-3 w-3" />
-                  {sortConfig.key === 'price' && (
-                    <span className="ml-1">{sortConfig.direction === 'asc' ? '↑' : '↓'}</span>
-                  )}
-                </div>
-              </th>
-              <th className="px-6 py-3 text-right text-xs font-bold text-white uppercase tracking-wider">
-                Acciones
-              </th>
+      <div className="overflow-x-auto">
+  <div className="min-w-[600px] md:min-w-0"> {/* Forza el ancho mínimo en móviles */}
+    <table className="w-full divide-y divide-gray-200">
+      <thead className="bg-fuchsia-800">
+        <tr>
+          <th 
+            className="px-3 py-3 text-left text-xs font-bold text-white uppercase tracking-wider cursor-pointer hover:bg-fuchsia-700 transition"
+            onClick={() => requestSort('title')}
+          >
+            <div className="flex items-center">
+              Título
+              <ArrowUpDown className="ml-1 h-3 w-3" />
+              {sortConfig.key === 'title' && (
+                <span className="ml-1 text-xs">{sortConfig.direction === 'asc' ? '↑' : '↓'}</span>
+              )}
+            </div>
+          </th>
+          <th 
+            className="px-3 py-3 text-left text-xs font-bold text-white uppercase tracking-wider cursor-pointer hover:bg-fuchsia-700 transition"
+            onClick={() => requestSort('category')}
+          >
+            <div className="flex items-center">
+              Categoría
+              <ArrowUpDown className="ml-1 h-3 w-3" />
+              {sortConfig.key === 'category' && (
+                <span className="ml-1 text-xs">{sortConfig.direction === 'asc' ? '↑' : '↓'}</span>
+              )}
+            </div>
+          </th>
+          <th 
+            className="px-3 py-3 text-left text-xs font-bold text-white uppercase tracking-wider cursor-pointer hover:bg-fuchsia-700 transition"
+            onClick={() => requestSort('price')}
+          >
+            <div className="flex items-center">
+              Precio
+              <ArrowUpDown className="ml-1 h-3 w-3" />
+              {sortConfig.key === 'price' && (
+                <span className="ml-1 text-xs">{sortConfig.direction === 'asc' ? '↑' : '↓'}</span>
+              )}
+            </div>
+          </th>
+          <th className="px-3 py-3 text-right text-xs font-bold text-white uppercase tracking-wider">
+            Acciones
+          </th>
+        </tr>
+      </thead>
+      <tbody className="bg-white divide-y divide-gray-200">
+        {isLoading ? (
+          Array.from({ length: 5 }).map((_, index) => (
+            <tr key={index}>
+              <td className="px-3 py-4 whitespace-nowrap"><Skeleton className="h-5 w-32" /></td>
+              <td className="px-3 py-4 whitespace-nowrap"><Skeleton className="h-5 w-24" /></td>
+              <td className="px-3 py-4 whitespace-nowrap"><Skeleton className="h-5 w-16" /></td>
+              <td className="px-3 py-4 whitespace-nowrap text-right"><Skeleton className="h-8 w-8 ml-auto" /></td>
             </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {isLoading ? (
-              Array.from({ length: 5 }).map((_, index) => (
-                <tr key={index}>
-                  <td className="px-6 py-4 whitespace-nowrap"><Skeleton className="h-5 w-32" /></td>
-                  <td className="px-6 py-4 whitespace-nowrap"><Skeleton className="h-5 w-24" /></td>
-                  <td className="px-6 py-4 whitespace-nowrap"><Skeleton className="h-5 w-16" /></td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right"><Skeleton className="h-8 w-8 ml-auto" /></td>
-                </tr>
-              ))
-            ) : (
-              sortedGames.map((game) => (
-                <tr key={game.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">
-                    {game.title}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-gray-600">
-                    {game.category}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-gray-600">
-                    {game.price > 0 ? `$${game.price.toFixed(2)}` : 'Gratis'}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
-                          <span className="sr-only">Abrir menú</span>
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="bg-gray-100 shadow-xl border-gray-300">
-                        <DropdownMenuItem onClick={() => handleEdit(game)}>
-                          <Edit className="mr-2 h-4 w-4" />
-                          <span>Editar</span>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={() => handleDeleteClick(game)}
-                          className="text-red-600"
-                        >
-                          <Trash2 className="mr-2 h-4 w-4" />
-                          <span>Eliminar</span>
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
+          ))
+        ) : (
+          sortedGames.map((game) => (
+            <tr key={game.id} className="hover:bg-gray-50">
+              <td className="px-3 py-4 whitespace-nowrap font-medium text-gray-900">
+                <span className="md:hidden font-bold">Título: </span>
+                {game.title}
+              </td>
+              <td className="px-3 py-4 whitespace-nowrap text-gray-600">
+                <span className="md:hidden font-bold">Categoría: </span>
+                {game.category}
+              </td>
+              <td className="px-3 py-4 whitespace-nowrap text-gray-600">
+                <span className="md:hidden font-bold">Precio: </span>
+                {game.price > 0 ? `$${game.price.toFixed(2)}` : 'Gratis'}
+              </td>
+              <td className="px-3 py-4 whitespace-nowrap text-right">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="h-8 w-8 p-0">
+                      <span className="sr-only">Abrir menú</span>
+                      <MoreHorizontal className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="bg-gray-100 shadow-xl border-gray-300">
+                    <DropdownMenuItem onClick={() => handleEdit(game)}>
+                      <Edit className="mr-2 h-4 w-4" />
+                      <span>Editar</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => handleDeleteClick(game)}
+                      className="text-red-600"
+                    >
+                      <Trash2 className="mr-2 h-4 w-4" />
+                      <span>Eliminar</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </td>
+            </tr>
+          ))
+        )}
+      </tbody>
+    </table>
+  </div>
+</div>
 
       <Separator className="my-12" />
 
