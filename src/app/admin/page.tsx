@@ -34,6 +34,7 @@ import { DollarSign, Lock } from "lucide-react";
 import ContactFormEditor from "@/components/ui/contactoActualizar";
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import DataTable from '@/components/Suscriptores';
+import {ResponsiveTabs} from '../../components/ui/ResponsiveTabs'
 
 // Componente para cambiar contraseña con Supabase
 function SupabasePasswordChange() {
@@ -440,83 +441,42 @@ function AdminPanel() {
 
       <Separator className="my-12" />
 
-      <Tabs defaultValue="juegos" className="w-full">
-  <TabsList className="bg-transparent mb-6 p-0 gap-2">
-    <TabsTrigger
-      value="password"
-      className="
-        relative px-4 py-2 rounded-lg text-sm font-medium
-        bg-white text-gray-700 shadow-sm border border-gray-200
-        hover:bg-gray-50 hover:text-gray-900 transition-all
-        data-[state=active]:bg-fuchsia-600 data-[state=active]:text-white
-        data-[state=active]:border-fuchsia-600 data-[state=active]:shadow-md
-        group
-      "
-    >
-      <KeyRound className="inline mr-2 h-4 w-4 group-data-[state=active]:text-white" />
-      <span>Cambiar Contraseña</span>
-      <span className="absolute inset-x-0 bottom-0 h-0.5 bg-transparent group-data-[state=active]:bg-fuchsia-300 transition-all" />
-    </TabsTrigger>
-    <TabsTrigger
-      value="rangos"
-      className="
-        relative px-4 py-2 rounded-lg text-sm font-medium
-        bg-white text-gray-700 shadow-sm border border-gray-200
-        hover:bg-gray-50 hover:text-gray-900 transition-all
-        data-[state=active]:bg-fuchsia-600 data-[state=active]:text-white
-        data-[state=active]:border-fuchsia-600 data-[state=active]:shadow-md
-        group
-      "
-    >
-      <DollarSign className="inline mr-2 h-4 w-4 group-data-[state=active]:text-white" />
-      <span>Rangos de Precio</span>
-      <span className="absolute inset-x-0 bottom-0 h-0.5 bg-transparent group-data-[state=active]:bg-fuchsia-300 transition-all" />
-    </TabsTrigger>
-    <TabsTrigger
-      value='contacto'
-      className="
-        relative px-4 py-2 rounded-lg text-sm font-medium
-        bg-white text-gray-700 shadow-sm border border-gray-200
-        hover:bg-gray-50 hover:text-gray-900 transition-all
-        data-[state=active]:bg-fuchsia-600 data-[state=active]:text-white
-        data-[state=active]:border-fuchsia-600 data-[state=active]:shadow-md
-        group
-      "
-    >
-      <span>Info de Admin</span>
-      <span className="absolute inset-x-0 bottom-0 h-0.5 bg-transparent group-data-[state=active]:bg-fuchsia-300 transition-all" />
-    </TabsTrigger>
-    <TabsTrigger
-      value='suscriptores'
-      className="
-        relative px-4 py-2 rounded-lg text-sm font-medium
-        bg-white text-gray-700 shadow-sm border border-gray-200
-        hover:bg-gray-50 hover:text-gray-900 transition-all
-        data-[state=active]:bg-fuchsia-600 data-[state=active]:text-white
-        data-[state=active]:border-fuchsia-600 data-[state=active]:shadow-md
-        group
-      "
-    >
-      <span>Suscriptores</span>
-      <span className="absolute inset-x-0 bottom-0 h-0.5 bg-transparent group-data-[state=active]:bg-fuchsia-300 transition-all" />
-    </TabsTrigger>
-  </TabsList>
-
-  <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-    <TabsContent value="password">
-      <SupabasePasswordChange />
-    </TabsContent>
-    <TabsContent value="rangos">
-      <PriceEditor />
-    </TabsContent>
-    <TabsContent value='contacto'>
-      <ContactFormEditor />
-    </TabsContent>
-    <TabsContent value='suscriptores'>
-      <DataTable/>
-    </TabsContent>
-  </div>
-</Tabs>
+<ResponsiveTabs 
+  defaultValue="juegos"
+  tabs={[
+    {
+      value: "password",
+      label: "Cambiar Contraseña",
+      icon: <KeyRound className="inline mr-2 h-4 w-4" />
+    },
+    {
+      value: "rangos",
+      label: "Rangos de Precio",
+      icon: <DollarSign className="inline mr-2 h-4 w-4" />
+    },
+    {
+      value: 'contacto',
+      label: 'Info de Admin'
+    },
+    {
+      value: 'suscriptores',
+      label: 'Suscriptores'
+    }
+  ]}
+>
+  <TabsContent value="password">
+    <SupabasePasswordChange />
+  </TabsContent>
+  <TabsContent value="rangos">
+    <PriceEditor />
+  </TabsContent>
+  <TabsContent value='contacto'>
+    <ContactFormEditor />
+  </TabsContent>
+  <TabsContent value='suscriptores'>
+    <DataTable/>
+  </TabsContent>
+</ResponsiveTabs>
 
       <GameForm
         isOpen={isFormOpen}
