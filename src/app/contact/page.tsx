@@ -25,7 +25,7 @@ export default function ContactPage() {
   const instagram = contactInfo.insta;
 
   return (
-    <div className='bg-gray-50 p-10'>
+    <div className='bg-gray-50 p-3'>
 
     <div className="container mx-auto max-w-4xl px-4 py-12 p-10 bg-white border-1 rounded-lg shadow-md">
     <div className="flex justify-center items-center py-8"> 
