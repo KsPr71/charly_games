@@ -180,7 +180,7 @@ export function GameCard({ game, onCardClick, onVote }: GameCardProps) {
           </AccordionItem>
         </Accordion>
         <p className="mt-auto mb-4 mt-4 text-2xl font-semibold text-blue-900 p-4">
-          {game.price > 0 ? `$${game.price.toFixed(2)}` : "Gratis"}
+          {game.price > 0 ? `$${game.price.toFixed(2)}` : "Aun no disponible"}
         </p>
         <Button
           asChild
