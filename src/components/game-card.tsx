@@ -33,6 +33,7 @@ import { StarRating } from "../components/starRating";
 import { submitRating } from "../components/submitRating";
 import { getAverageRating } from "../components/getAverageRating";
 import { useContact } from "../context/ContactContext";
+import GoldenBadge from "../components/ui/golden-batch";
 
 interface GameCardProps {
   game: Game;
@@ -72,21 +73,31 @@ export function GameCard({ game, onCardClick, onVote }: GameCardProps) {
     <Card className="flex h-full transform flex-col overflow-hidden rounded-lg shadow-lg transition-transform duration-300 hover:scale-105 hover:shadow-xl bg-white relative z-0">
       <div onClick={onCardClick} className="cursor-pointer">
         <CardHeader className="p-0">
-          <div className="relative w-full aspect-[3/2] rounded-t-lg overflow-hidden hover:scale-[1.02] hover:shadow-lg transition">
-            
-            { game.imageUrl ? (
-              <Image
-                src={game.imageUrl}
-                alt={`Cover art for ${game.title}`}
-                fill
-                className="object-cover"
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              />
-            ) : (
-              <div> Imagen no disponible</div>
-            )
-            }
-          </div>
+<div className="relative w-full aspect-[3/2] rounded-t-lg overflow-hidden group">
+  {/* Contenedor de imagen */}
+  <div className="relative w-full h-full hover:scale-[1.02] hover:shadow-lg transition">
+    {game.imageUrl ? (
+      <Image
+        src={game.imageUrl}
+        alt={`Cover art for ${game.title}`}
+        fill
+        className="object-cover"
+        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+      />
+    ) : (
+      <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+        Imagen no disponible
+      </div>
+    )}
+  </div>
+  
+  {/* Insignia - versión corregida */}
+  {game.gotty !== undefined && game.gotty !== null && game.gotty !== ""  && (
+    <div className="absolute -top-4 -right-4 z-10">
+      <GoldenBadge gottyValue={game.gotty} size="md" />
+    </div>
+  )}
+</div>
         </CardHeader>
 
         <CardContent className="flex flex-grow flex-col p-4 pb-2">

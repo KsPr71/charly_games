@@ -55,6 +55,7 @@ const formSchema = z.object({
   storage: z.string().optional(),
   weight: z.coerce.number().min(0.1).optional(),
   image: z.string().url().optional(),
+  gotty: z.string().optional(),
 });
 type GameFormValues = z.infer<typeof formSchema>;
  
@@ -116,6 +117,7 @@ function calcularPrecio(weight: unknown): number {
       graphics: game?.graphics ?? "",
       storage: game?.storage ?? "",
       weight: game?.weight ?? 0,
+      gotty: game?.gotty ?? "",
       
     }),
     [game, ranges]
@@ -222,6 +224,7 @@ useEffect(() => {
     graphics: "Tarjeta Gráfica",
     storage: "Almacenamiento",
     weight: "Tamaño (GB)",
+    gotty: "Año de GOTY"
   };
 
     const weightValue = form.watch("weight");
@@ -314,6 +317,21 @@ const precioCalculado = calcularPrecio(weightValue);
                   )}
                 />
 
+
+                <FormField
+                  control={form.control}
+                  name="gotty"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Año de GOTY</FormLabel>
+                      <FormControl>
+                        <Textarea className="rounded-md" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
       <Accordion
           type="single"
           collapsible
@@ -393,6 +411,10 @@ const precioCalculado = calcularPrecio(weightValue);
     </FormItem>
   )}
 />
+
+
+
+
 
                 <div className="grid grid-cols-2 gap-4">
                   <FormField

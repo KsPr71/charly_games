@@ -93,6 +93,7 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
           graphics: game.graphics,
           storage: game.storage,
           weight: game.weight,
+          gotty: game.gotty,
         })
         .select()
       
@@ -127,6 +128,7 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
           graphics: game.graphics,
           storage: game.storage,
           weight: game.weight,
+          gotty: game.gotty,
         })
         .eq('id', game.id)
       
