@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 
 interface GoldenBadgeProps {
   gottyValue: number | string;
@@ -31,11 +32,20 @@ const GoldenBadge: React.FC<GoldenBadgeProps> = ({
         <div className="absolute inset-0 rounded-full border-t-2 border-l-2 border-yellow-200 opacity-60"></div>
         
         {/* Contenido del badge con padding superior */}
-        <div className="flex flex-col items-center transform -rotate-12 z-10 pt-2">
-          <span className="font-bold text-fuchsia-800 tracking-wider pt-3">
+
+                <Image
+                  src='/badge.png'
+                  alt='GOTY'
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                />
+        <div className="flex flex-col items-center transform -rotate-12 z-10 gap-0">
+          <span className="font-bold text-fuchsia-800 tracking-wider pt-4">
+
             GOTY
           </span>
-          <span className="font-bold text-yellow-900 text-lg">
+          <span className="font-bold text-yellow-900 text-lg -mt-2">
             {gottyValue}
           </span>
         </div>
