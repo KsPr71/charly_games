@@ -35,6 +35,12 @@ import { memoryOptions } from "../data/memory-options";
 import { graphicsOptions } from "../data/graphics-options";
 import { storageOptions } from "../data/storage-options";
 import { categoryOptions } from "../data/category-options";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 const formSchema = z.object({
   title: z.string().min(2),
@@ -51,6 +57,7 @@ const formSchema = z.object({
   image: z.string().url().optional(),
 });
 type GameFormValues = z.infer<typeof formSchema>;
+ 
 
 interface GameFormProps {
   isOpen: boolean;
@@ -202,7 +209,7 @@ useEffect(() => {
     }
     setIsOpen(false);
   };
-
+  const [isAccordionOpen, setIsAccordionOpen] = useState(false);
   const allCategories = useMemo(() => {
     const categoriesSet = new Set(games.map((g) => g.category));
     return Array.from(categoriesSet).sort();
@@ -307,6 +314,22 @@ const precioCalculado = calcularPrecio(weightValue);
                   )}
                 />
 
+      <Accordion
+          type="single"
+          collapsible
+          onValueChange={(value) => setIsAccordionOpen(!!value)}
+        >
+
+              <AccordionItem
+              value= 'categorias'
+              className="border-1 border-r border-gray-400 bg-gray-100 rounded-md p-1"
+              >
+              <AccordionTrigger className="flex w-full justify-center rounded-md bg-gray-100 px-4 py-2 text-sm text-bold font-medium text-secondary-foreground hover:bg-fuchsia-100  hover:no-underline">
+              <span className="font-bold">Categorias disponibles</span> 
+              </AccordionTrigger> 
+                <AccordionContent className="text-gray-500 data-[state=open]:text-gray-800 transition-colors duration-300">
+
+
                 {allCategories.length > 0 && (
                   <div className="space-y-2 pt-1">
                     <FormLabel className="text-sm text-muted-foreground">
@@ -334,6 +357,15 @@ const precioCalculado = calcularPrecio(weightValue);
                     </div>
                   </div>
                 )}
+
+                </AccordionContent>
+            </AccordionItem>      
+        </Accordion>
+
+
+
+
+
 
 <FormField
   control={form.control}
