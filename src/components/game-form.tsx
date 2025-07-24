@@ -321,11 +321,16 @@ const precioCalculado = calcularPrecio(weightValue);
                 <FormField
                   control={form.control}
                   name="gotty"
+                  
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Año de GOTY</FormLabel>
                       <FormControl>
-                        <Textarea className="rounded-md" {...field} />
+                        <Textarea 
+  className="rounded-md h-20" // Altura más pequeña (80px)
+  placeholder="Poner el año del GOTY o dejar vacío" 
+  {...field} 
+/>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
