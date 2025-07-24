@@ -58,7 +58,6 @@ const formSchema = z.object({
   gotty: z.string().optional(),
 });
 type GameFormValues = z.infer<typeof formSchema>;
- 
 
 interface GameFormProps {
   isOpen: boolean;
@@ -66,8 +65,6 @@ interface GameFormProps {
   game?: Game;
   className?: string;
 }
-
-
 
 function usePriceRanges() {
   const [ranges, setRanges] = useState<
@@ -93,16 +90,15 @@ export function GameForm({ isOpen, setIsOpen, game }: GameFormProps) {
   const { games, addGame, updateGame } = useContext(GameContext);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const ranges = usePriceRanges();
-  
 
-function calcularPrecio(weight: unknown): number {
-  const peso = typeof weight === "string" ? Number(weight) : weight;
+  function calcularPrecio(weight: unknown): number {
+    const peso = typeof weight === "string" ? Number(weight) : weight;
 
-  if (!ranges.length || typeof peso !== "number" || isNaN(peso)) return 0;
+    if (!ranges.length || typeof peso !== "number" || isNaN(peso)) return 0;
 
-  const rango = ranges.find((r) => peso >= r.min && peso <= r.max);
-  return rango ? rango.price : 0;
-}
+    const rango = ranges.find((r) => peso >= r.min && peso <= r.max);
+    return rango ? rango.price : 0;
+  }
 
   const defaultValues: GameFormValues = useMemo(
     () => ({
@@ -118,12 +114,9 @@ function calcularPrecio(weight: unknown): number {
       storage: game?.storage ?? "",
       weight: game?.weight ?? 0,
       gotty: game?.gotty ?? "",
-      
     }),
     [game, ranges]
   );
-
-
 
   const form = useForm<GameFormValues>({
     resolver: zodResolver(formSchema),
@@ -135,10 +128,7 @@ function calcularPrecio(weight: unknown): number {
   const estimatedPrice = calcularPrecio(currentWeight);
 
   useEffect(() => {
-    if (
-      typeof currentWeight === "number" &&
-      !isNaN(currentWeight)
-    ) {
+    if (typeof currentWeight === "number" && !isNaN(currentWeight)) {
       form.setValue("price", estimatedPrice, { shouldValidate: true });
     }
   }, [currentWeight, estimatedPrice, form]);
@@ -153,31 +143,29 @@ function calcularPrecio(weight: unknown): number {
     }
   }, [game]);
 
-useEffect(() => {
-  const subscription = form.watch((value, { name }) => {
-    if (
-      name === "weight" &&
-      typeof value.weight === "number" &&
-      !isNaN(value.weight) &&
-      ranges.length > 0
-    ) {
-      const rango = ranges.find(
-        (r) =>
-          typeof r.min === "number" &&
-          typeof r.max === "number" &&
-          value.weight >= r.min &&
-          value.weight <= r.max
-      );
+  useEffect(() => {
+    const subscription = form.watch((value, { name }) => {
+      if (
+        name === "weight" &&
+        typeof value.weight === "number" &&
+        !isNaN(value.weight) &&
+        ranges.length > 0
+      ) {
+        const rango = ranges.find(
+          (r) =>
+            typeof r.min === "number" &&
+            typeof r.max === "number" &&
+            value.weight >= r.min &&
+            value.weight <= r.max
+        );
 
-      const precioCalculado = rango ? rango.price : 0;
-      form.setValue("price", precioCalculado, { shouldValidate: true });
-    }
-  });
+        const precioCalculado = rango ? rango.price : 0;
+        form.setValue("price", precioCalculado, { shouldValidate: true });
+      }
+    });
 
-  return () => subscription.unsubscribe();
-}, [form, ranges]);
-
-
+    return () => subscription.unsubscribe();
+  }, [form, ranges]);
 
   const handleImageUpload = async (file: File): Promise<string> => {
     const fileExt = file.name.split(".").pop();
@@ -224,11 +212,11 @@ useEffect(() => {
     graphics: "Tarjeta Gráfica",
     storage: "Almacenamiento",
     weight: "Tamaño (GB)",
-    gotty: "Año de GOTY"
+    gotty: "Año de GOTY",
   };
 
-    const weightValue = form.watch("weight");
-const precioCalculado = calcularPrecio(weightValue);
+  const weightValue = form.watch("weight");
+  const precioCalculado = calcularPrecio(weightValue);
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -291,8 +279,6 @@ const precioCalculado = calcularPrecio(weightValue);
                   )}
                 />
 
-                
-
                 <FormField
                   control={form.control}
                   name="category"
@@ -317,109 +303,98 @@ const precioCalculado = calcularPrecio(weightValue);
                   )}
                 />
 
-
                 <FormField
                   control={form.control}
                   name="gotty"
-                  
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Año de GOTY</FormLabel>
                       <FormControl>
-                        <Textarea 
-  className="rounded-md h-20" // Altura más pequeña (80px)
-  placeholder="Poner el año del GOTY o dejar vacío" 
-  {...field} 
-/>
+                        <Textarea
+                          className="rounded-md h-20" // Altura más pequeña (80px)
+                          placeholder="Poner el año del GOTY o dejar vacío"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
 
-      <Accordion
-          type="single"
-          collapsible
-          onValueChange={(value) => setIsAccordionOpen(!!value)}
-        >
+                <Accordion
+                  type="single"
+                  collapsible
+                  onValueChange={(value) => setIsAccordionOpen(!!value)}
+                >
+                  <AccordionItem
+                    value="categorias"
+                    className="border-1 border-r border-gray-400 bg-gray-100 rounded-md p-1"
+                  >
+                    <AccordionTrigger className="flex w-full justify-center rounded-md bg-gray-100 px-4 py-2 text-sm text-bold font-medium text-secondary-foreground hover:bg-fuchsia-100  hover:no-underline">
+                      <span className="font-bold">Categorias disponibles</span>
+                    </AccordionTrigger>
+                    <AccordionContent className="text-gray-500 data-[state=open]:text-gray-800 transition-colors duration-300">
+                      {allCategories.length > 0 && (
+                        <div className="space-y-2 pt-1">
+                          <FormLabel className="text-sm text-muted-foreground">
+                            Categorías existentes:
+                          </FormLabel>
+                          <div className="flex flex-wrap gap-2">
+                            {allCategories.map((category) => (
+                              <Badge
+                                key={category}
+                                variant={
+                                  form.watch("category") === category
+                                    ? "default"
+                                    : "secondary"
+                                }
+                                className="cursor-pointer transition hover:scale-105"
+                                onClick={() =>
+                                  form.setValue("category", category, {
+                                    shouldValidate: true,
+                                  })
+                                }
+                              >
+                                {category}
+                              </Badge>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </AccordionContent>
+                  </AccordionItem>
+                </Accordion>
 
-              <AccordionItem
-              value= 'categorias'
-              className="border-1 border-r border-gray-400 bg-gray-100 rounded-md p-1"
-              >
-              <AccordionTrigger className="flex w-full justify-center rounded-md bg-gray-100 px-4 py-2 text-sm text-bold font-medium text-secondary-foreground hover:bg-fuchsia-100  hover:no-underline">
-              <span className="font-bold">Categorias disponibles</span> 
-              </AccordionTrigger> 
-                <AccordionContent className="text-gray-500 data-[state=open]:text-gray-800 transition-colors duration-300">
-
-
-                {allCategories.length > 0 && (
-                  <div className="space-y-2 pt-1">
-                    <FormLabel className="text-sm text-muted-foreground">
-                      Categorías existentes:
-                    </FormLabel>
-                    <div className="flex flex-wrap gap-2">
-                      {allCategories.map((category) => (
-                        <Badge
-                          key={category}
-                          variant={
-                            form.watch("category") === category
-                              ? "default"
-                              : "secondary"
-                          }
-                          className="cursor-pointer transition hover:scale-105"
-                          onClick={() =>
-                            form.setValue("category", category, {
-                              shouldValidate: true,
-                            })
-                          }
-                        >
-                          {category}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                </AccordionContent>
-            </AccordionItem>      
-        </Accordion>
-
-
-
-
-
-
-<FormField
-  control={form.control}
-  name="weight"
-  render={({ field }) => (
-    <FormItem>
-      <FormLabel>Tamaño</FormLabel>
-      <FormControl>
-        <Input
-  type="number"
-  min={0}
-  step={'any'}
-  value={form.watch("weight") ?? ""}
-  onChange={(e) => {
-    const valor = Number(e.target.value);
-    form.setValue("weight", isNaN(valor) ? undefined : valor, { shouldValidate: true });
-  }}
-/>
-      </FormControl>
-      <FormMessage />
-      {/* ✅ Vista del precio calculado */}
-      <p className="text-sm text-muted-foreground mt-1">
-        Precio estimado: ${precioCalculado.toFixed(2)}
-      </p>
-    </FormItem>
-  )}
-/>
-
-
-
-
+                <FormField
+                  control={form.control}
+                  name="weight"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Tamaño</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          min={0}
+                          step={"any"}
+                          value={form.watch("weight") ?? ""}
+                          onChange={(e) => {
+                            const valor = Number(e.target.value);
+                            form.setValue(
+                              "weight",
+                              isNaN(valor) ? undefined : valor,
+                              { shouldValidate: true }
+                            );
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                      {/* ✅ Vista del precio calculado */}
+                      <p className="text-sm text-muted-foreground mt-1">
+                        Precio estimado: ${precioCalculado.toFixed(2)}
+                      </p>
+                    </FormItem>
+                  )}
+                />
 
                 <div className="grid grid-cols-2 gap-4">
                   <FormField
@@ -440,98 +415,100 @@ const precioCalculado = calcularPrecio(weightValue);
                       </FormItem>
                     )}
                   />
-
-                  
                 </div>
 
-<FormField
-  control={form.control}
-  name="imageUrl"
-  render={() => (
-    <FormItem>
-      <FormLabel>Imagen del juego (.webp)</FormLabel>
-      <FormControl>
-        <div className="space-y-2">
-          {isUploading && (
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <span className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-primary"></span>
-              Subiendo imagen...
-            </div>
-          )}
-          {previewUrl && !isUploading && (
-            <img
-              src={previewUrl}
-              alt="Vista previa"
-              className="rounded-md border w-full object-cover max-h-48"
-            />
-          )}
-          <Input
-            type="file"
-            accept="image/*"
-            onChange={async (e) => {
-              const file = e.target.files?.[0];
-              if (!file) return;
-              if (file.size > 5_000_000) {
-                console.error("Archivo muy pesado (>5MB)");
-                return;
-              }
+                <FormField
+                  control={form.control}
+                  name="imageUrl"
+                  render={() => (
+                    <FormItem>
+                      <FormLabel>Imagen del juego (.webp)</FormLabel>
+                      <FormControl>
+                        <div className="space-y-2">
+                          {isUploading && (
+                            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                              <span className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-primary"></span>
+                              Subiendo imagen...
+                            </div>
+                          )}
+                          {previewUrl && !isUploading && (
+                            <img
+                              src={previewUrl}
+                              alt="Vista previa"
+                              className="rounded-md border w-full object-cover max-h-48"
+                            />
+                          )}
+                          <Input
+                            type="file"
+                            accept="image/*"
+                            onChange={async (e) => {
+                              const file = e.target.files?.[0];
+                              if (!file) return;
+                              if (file.size > 5_000_000) {
+                                console.error("Archivo muy pesado (>5MB)");
+                                return;
+                              }
 
-              try {
-                setIsUploading(true); // 👈 inicia loader
+                              try {
+                                setIsUploading(true); // 👈 inicia loader
 
-                const image = new Image();
-                image.src = URL.createObjectURL(file);
-                image.onload = async () => {
-                  const canvas = document.createElement("canvas");
-                  canvas.width = image.width;
-                  canvas.height = image.height;
-                  const ctx = canvas.getContext("2d");
-                  if (!ctx) return;
-                  ctx.drawImage(image, 0, 0);
+                                const image = new Image();
+                                image.src = URL.createObjectURL(file);
+                                image.onload = async () => {
+                                  const canvas =
+                                    document.createElement("canvas");
+                                  canvas.width = image.width;
+                                  canvas.height = image.height;
+                                  const ctx = canvas.getContext("2d");
+                                  if (!ctx) return;
+                                  ctx.drawImage(image, 0, 0);
 
-                  canvas.toBlob(
-                    async (blob) => {
-                      if (blob) {
-                        const fileName = `${Date.now()}.webp`;
-                        const { data, error } = await supabase.storage
-                          .from("game-images")
-                          .upload(fileName, blob, {
-                            contentType: "image/webp",
-                            upsert: false,
-                          });
+                                  canvas.toBlob(
+                                    async (blob) => {
+                                      if (blob) {
+                                        const fileName = `${Date.now()}.webp`;
+                                        const { data, error } =
+                                          await supabase.storage
+                                            .from("game-images")
+                                            .upload(fileName, blob, {
+                                              contentType: "image/webp",
+                                              upsert: false,
+                                            });
 
-                        if (error) {
-                          console.error("Error al subir la imagen:", error.message);
-                        } else {
-                          const url = `https://ticudnzjewvqmrgagntg.supabase.co/storage/v1/object/public/game-images/${fileName}`;
-                          form.setValue("imageUrl", url, { shouldValidate: true });
-                          setPreviewUrl(url);
-                        }
-                        setIsUploading(false); // 👈 detiene loader
-                      }
-                    },
-                    "image/webp",
-                    0.8
-                  );
-                };
-              } catch (err) {
-                console.error("Error al procesar la imagen:", err);
-                setIsUploading(false);
-              }
-            }}
-          />
-        </div>
-      </FormControl>
-      <FormMessage />
-    </FormItem>
-  )}
-/>
-
-
-
-
-
-
+                                        if (error) {
+                                          console.error(
+                                            "Error al subir la imagen:",
+                                            error.message
+                                          );
+                                        } else {
+                                          const url = `https://ticudnzjewvqmrgagntg.supabase.co/storage/v1/object/public/game-images/${fileName}`;
+                                          form.setValue("imageUrl", url, {
+                                            shouldValidate: true,
+                                          });
+                                          setPreviewUrl(url);
+                                        }
+                                        setIsUploading(false); // 👈 detiene loader
+                                      }
+                                    },
+                                    "image/webp",
+                                    0.8
+                                  );
+                                };
+                              } catch (err) {
+                                console.error(
+                                  "Error al procesar la imagen:",
+                                  err
+                                );
+                                setIsUploading(false);
+                              }
+                            }}
+                          />
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </TabsContent>
 
               <TabsContent value="tech" className="space-y-4">
