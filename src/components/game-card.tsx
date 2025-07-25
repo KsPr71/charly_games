@@ -34,6 +34,7 @@ import { submitRating } from "../components/submitRating";
 import { getAverageRating } from "../components/getAverageRating";
 import { useContact } from "../context/ContactContext";
 import GoldenBadge from "../components/ui/golden-batch";
+import GameYearTriangle from "./ui/GameYearTriangle";
 
 interface GameCardProps {
   game: Game;
@@ -76,6 +77,13 @@ export function GameCard({ game, onCardClick, onVote }: GameCardProps) {
 <div className="relative w-full aspect-[3/2] rounded-t-lg overflow-hidden group">
   {/* Contenedor de imagen */}
   <div className="relative w-full h-full hover:scale-[1.02] hover:shadow-lg transition">
+  
+ {game.year && (
+  <GameYearTriangle year={game.year as string} />
+ )}
+ 
+  
+  
     {game.imageUrl ? (
       <Image
         src={game.imageUrl}
@@ -84,6 +92,7 @@ export function GameCard({ game, onCardClick, onVote }: GameCardProps) {
         className="object-cover"
         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
       />
+      
     ) : (
       <div className="w-full h-full bg-gray-200 flex items-center justify-center">
         Imagen no disponible
@@ -95,9 +104,11 @@ export function GameCard({ game, onCardClick, onVote }: GameCardProps) {
   {game.gotty !== undefined && game.gotty !== null && game.gotty !== ""  && (
     <div className="absolute -top-4 -right-4 z-10">
       <GoldenBadge gottyValue={game.gotty} size="md" />
+     
     </div>
   )}
 </div>
+
         </CardHeader>
 
         <CardContent className="flex flex-grow flex-col p-4 pb-2">

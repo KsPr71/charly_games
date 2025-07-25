@@ -56,6 +56,7 @@ const formSchema = z.object({
   weight: z.coerce.number().min(0.1).optional(),
   image: z.string().url().optional(),
   gotty: z.string().optional(),
+  year: z.string().optional(),
 });
 type GameFormValues = z.infer<typeof formSchema>;
 
@@ -114,6 +115,7 @@ export function GameForm({ isOpen, setIsOpen, game }: GameFormProps) {
       storage: game?.storage ?? "",
       weight: game?.weight ?? 0,
       gotty: game?.gotty ?? "",
+      year: game?.year ?? "",
     }),
     [game, ranges]
   );
@@ -193,7 +195,7 @@ export function GameForm({ isOpen, setIsOpen, game }: GameFormProps) {
 
   const onSubmit = async (data: GameFormValues) => {
     if (game) {
-      await updateGame({ id: game.id, ...data });
+      await updateGame({ id: game.id, created_at: game.created_at, ...data });
     } else {
       await addGame(data);
     }
@@ -213,6 +215,7 @@ export function GameForm({ isOpen, setIsOpen, game }: GameFormProps) {
     storage: "Almacenamiento",
     weight: "Tamaño (GB)",
     gotty: "Año de GOTY",
+    year: "Año de Lanzamiento",
   };
 
   const weightValue = form.watch("weight");
@@ -302,24 +305,42 @@ export function GameForm({ isOpen, setIsOpen, game }: GameFormProps) {
                     </FormItem>
                   )}
                 />
-
-                <FormField
-                  control={form.control}
-                  name="gotty"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Año de GOTY</FormLabel>
-                      <FormControl>
-                        <Textarea
-                          className="rounded-md h-20" // Altura más pequeña (80px)
-                          placeholder="Poner el año del GOTY o dejar vacío"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                <div>
+                  <FormField
+                    control={form.control}
+                    name="year"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Año de Lanzamiento</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            className="rounded-md h-20" // Altura más pequeña (80px)
+                            placeholder="Año de Lanzamiento"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="gotty"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Año de GOTY</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            className="rounded-md h-20" // Altura más pequeña (80px)
+                            placeholder="Poner el año del GOTY o dejar vacío"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
 
                 <Accordion
                   type="single"
