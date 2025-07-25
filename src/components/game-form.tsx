@@ -456,7 +456,7 @@ export function GameForm({ isOpen, setIsOpen, game }: GameFormProps) {
                             <img
                               src={previewUrl}
                               alt="Vista previa"
-                              className="rounded-md border w-full object-cover max-h-48"
+                              className="rounded-md border w-full object-cover max-h-60"
                             />
                           )}
                           <Input
