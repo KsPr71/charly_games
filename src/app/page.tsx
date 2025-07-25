@@ -174,27 +174,27 @@ const recentGames = useMemo(() => {
             </h2>
             <Carousel opts={{ align: "start", loop: true }} className="w-full">
               <CarouselContent>
-                {topGames.map((top) => (
+                {topGames.map((top: any) => (
                   <CarouselItem
-                    key={top.id}
+                    key={(top as any).id}
                     className="p-2 md:basis-1/2 lg:basis-1/3 xl:basis-1/4"
                   >
                     <div className="bg-white rounded-lg shadow-md p-4 hover:scale-105 transition-transform">
                       <div className="relative w-full aspect-[3/2] mb-3 rounded overflow-hidden">
                         <Image
-                          src={top.image_url}
-                          alt={`Portada de ${top.title}`}
+                          src={(top as any).image_url}
+                          alt={`Portada de ${(top as any).title}`}
                           fill
                           className="object-cover rounded"
                           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         />
                       </div>
                       <h3 className="text-lg font-bold text-center">
-                        {top.title}
+                        {(top as any).title}
                       </h3>
                       <div className="flex justify-center mt-2 space-x-1">
                         {Array.from({ length: 5 }).map((_, i) => {
-                          const filled = i < Math.round(top.average_rating);
+                          const filled = i < Math.round((top as any).average_rating);
                           return (
                             <span
                               key={i}
