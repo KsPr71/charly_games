@@ -305,42 +305,6 @@ export function GameForm({ isOpen, setIsOpen, game }: GameFormProps) {
                     </FormItem>
                   )}
                 />
-                <div>
-                  <FormField
-                    control={form.control}
-                    name="year"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Año de Lanzamiento</FormLabel>
-                        <FormControl>
-                          <Textarea
-                            className="rounded-md h-20" // Altura más pequeña (80px)
-                            placeholder="Año de Lanzamiento"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="gotty"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Año de GOTY</FormLabel>
-                        <FormControl>
-                          <Textarea
-                            className="rounded-md h-20" // Altura más pequeña (80px)
-                            placeholder="Poner el año del GOTY o dejar vacío"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
 
                 <Accordion
                   type="single"
@@ -386,49 +350,17 @@ export function GameForm({ isOpen, setIsOpen, game }: GameFormProps) {
                   </AccordionItem>
                 </Accordion>
 
-                <FormField
-                  control={form.control}
-                  name="weight"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Tamaño</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="number"
-                          min={0}
-                          step={"any"}
-                          value={form.watch("weight") ?? ""}
-                          onChange={(e) => {
-                            const valor = Number(e.target.value);
-                            form.setValue(
-                              "weight",
-                              isNaN(valor) ? undefined : valor,
-                              { shouldValidate: true }
-                            );
-                          }}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                      {/* ✅ Vista del precio calculado */}
-                      <p className="text-sm text-muted-foreground mt-1">
-                        Precio estimado: ${precioCalculado.toFixed(2)}
-                      </p>
-                    </FormItem>
-                  )}
-                />
-
                 <div className="grid grid-cols-2 gap-4">
                   <FormField
                     control={form.control}
-                    name="price"
+                    name="year"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Precio</FormLabel>
+                        <FormLabel>Año de Lanzamiento</FormLabel>
                         <FormControl>
-                          <Input
-                            type="number"
-                            step="0.01"
-                            className="rounded-md"
+                          <Textarea
+                            className="rounded-md h-5" // Altura más pequeña (80px)
+                            placeholder="Año de Lanzamiento"
                             {...field}
                           />
                         </FormControl>
@@ -436,6 +368,74 @@ export function GameForm({ isOpen, setIsOpen, game }: GameFormProps) {
                       </FormItem>
                     )}
                   />
+                  <FormField
+                    control={form.control}
+                    name="gotty"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Año de GOTY</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            className="rounded-md h-20" // Altura más pequeña (80px)
+                            placeholder="Poner el año del GOTY o dejar vacío"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="weight"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Tamaño</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            min={0}
+                            step={"any"}
+                            value={form.watch("weight") ?? ""}
+                            onChange={(e) => {
+                              const valor = Number(e.target.value);
+                              form.setValue(
+                                "weight",
+                                isNaN(valor) ? undefined : valor,
+                                { shouldValidate: true }
+                              );
+                            }}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                        {/* ✅ Vista del precio calculado */}
+                        <p className="text-sm text-muted-foreground mt-1">
+                          Precio estimado: ${precioCalculado.toFixed(2)}
+                        </p>
+                      </FormItem>
+                    )}
+                  />
+
+                  <div className="grid grid-cols-1 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="price"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Precio</FormLabel>
+                          <FormControl>
+                            <Input
+                              type="number"
+                              step="0.01"
+                              className="rounded-md"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
                 </div>
 
                 <FormField
