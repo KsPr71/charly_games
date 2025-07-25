@@ -41,7 +41,7 @@ export default function Home() {
 const recentGames = useMemo(() => {
   return [...games]
     .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-    .slice(0, 5);
+    .slice(0, 15);
 }, [games]);
 
   const categories = useMemo(() => {
