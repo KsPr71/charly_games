@@ -204,10 +204,13 @@ function AdminPanel() {
   );
 
   const sortedGames = [...filteredGames].sort((a, b) => {
-    if (a[sortConfig.key] < b[sortConfig.key]) {
+    const aValue = a[sortConfig.key] ?? '';
+    const bValue = b[sortConfig.key] ?? '';
+    
+    if (aValue < bValue) {
       return sortConfig.direction === "asc" ? -1 : 1;
     }
-    if (a[sortConfig.key] > b[sortConfig.key]) {
+    if (aValue > bValue) {
       return sortConfig.direction === "asc" ? 1 : -1;
     }
     return 0;
@@ -325,7 +328,11 @@ function AdminPanel() {
               ))
             ) : (
               sortedGames.map((game) => (
-                <tr key={game.id} className="hover:bg-gray-50">
+                <tr 
+                  key={game.id} 
+                  className="hover:bg-gray-50 cursor-pointer"
+                  onClick={() => handleEdit(game)}
+                >
                   <td className="px-3 py-4 whitespace-nowrap font-medium text-gray-900">
                     {game.title}
                   </td>
@@ -338,7 +345,11 @@ function AdminPanel() {
                   <td className="px-3 py-4 whitespace-nowrap text-right">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
+                        <Button 
+                          variant="ghost" 
+                          className="h-8 w-8 p-0"
+                          onClick={(e) => e.stopPropagation()}
+                        >
                           <span className="sr-only">Abrir menú</span>
                           <MoreHorizontal className="h-4 w-4" />
                         </Button>
@@ -350,12 +361,18 @@ function AdminPanel() {
                         sideOffset={5}
                         collisionPadding={{ top: 10, bottom: 10, left: 10, right: 10 }}
                       >
-                        <DropdownMenuItem onClick={() => handleEdit(game)}>
+                        <DropdownMenuItem onClick={(e) => {
+                          e.stopPropagation();
+                          handleEdit(game);
+                        }}>
                           <Edit className="mr-2 h-4 w-4" />
                           <span>Editar</span>
                         </DropdownMenuItem>
                         <DropdownMenuItem
-                          onClick={() => handleDeleteClick(game)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteClick(game);
+                          }}
                           className="text-red-600"
                         >
                           <Trash2 className="mr-2 h-4 w-4" />
