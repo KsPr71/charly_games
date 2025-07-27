@@ -7,12 +7,17 @@ const supabase = createClient(
 )
 
 
-export async function fetchGames({ limit = 50, offset = 0 } = {}) {
-  const { data, error } = await supabase
+export async function fetchGames({ limit = 50, offset = 0, category = null }: { limit?: number; offset?: number; category?: string | null } = {}) {
+  let query = supabase
     .from('games')
     .select('*')
-    .order('created_at', { ascending: false })
-    .range(offset, offset + limit - 1);
+    .order('created_at', { ascending: false });
+  
+  if (category && category !== 'Todos') {
+    query = query.eq('category', category);
+  }
+  
+  const { data, error } = await query.range(offset, offset + limit - 1);
   if (error) throw error;
   return data;
 }

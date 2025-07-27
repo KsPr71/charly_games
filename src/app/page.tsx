@@ -81,7 +81,11 @@ const recentGames = useMemo(() => {
   const [exploreHasMore, setExploreHasMore] = useState(true);
 
   const loadMoreExploreGames = async () => {
-    const newGames = await fetchGames({ limit: PAGE_SIZE, offset: explorePage * PAGE_SIZE });
+    const newGames = await fetchGames({ 
+      limit: PAGE_SIZE, 
+      offset: explorePage * PAGE_SIZE,
+      category: selectedCategory 
+    });
     setExploreGames(prev => [...prev, ...newGames]);
     setExploreHasMore(newGames.length === PAGE_SIZE);
     setExplorePage(prev => prev + 1);
@@ -90,6 +94,14 @@ const recentGames = useMemo(() => {
   useEffect(() => {
     loadMoreExploreGames();
   }, []);
+
+  // Resetear y cargar nuevos juegos cuando cambie la categoría
+  useEffect(() => {
+    setExploreGames([]);
+    setExplorePage(0);
+    setExploreHasMore(true);
+    loadMoreExploreGames();
+  }, [selectedCategory]);
 
   return (
     <div className="min-h-screen bg-gray-100">
