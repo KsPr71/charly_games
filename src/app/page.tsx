@@ -179,7 +179,7 @@ const recentGames = useMemo(() => {
                     key={(top as any).id}
                     className="p-2 md:basis-1/2 lg:basis-1/3 xl:basis-1/4"
                   >
-                    <div className="bg-white rounded-lg shadow-md p-4 hover:scale-105 transition-transform">
+                    <div className="bg-white rounded-lg shadow-md p-4 hover:scale-105 transition-transform relative">
                       <div className="relative w-full aspect-[3/2] mb-3 rounded overflow-hidden">
                         <Image
                           src={(top as any).image_url}
@@ -206,6 +206,11 @@ const recentGames = useMemo(() => {
                             </span>
                           );
                         })}
+                      </div>
+                      
+                      {/* Promedio en la esquina inferior derecha */}
+                      <div className="absolute bottom-2 right-2 bg-fuchsia-600 text-white text-xs font-bold px-2 py-1 rounded-full shadow-md">
+                        {(top as any).average_rating?.toFixed(1) || "0.0"}
                       </div>
                     </div>
                   </CarouselItem>
