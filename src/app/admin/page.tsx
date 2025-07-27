@@ -447,6 +447,12 @@ export default function AdminPage() {
         }
       } catch (error) {
         console.error("Error checking auth:", error);
+        // Si hay error de refresh token, limpiar sesión
+        if (error instanceof Error && error.message.includes('Invalid Refresh Token')) {
+          await supabase.auth.signOut();
+          localStorage.clear();
+          sessionStorage.clear();
+        }
       } finally {
         setLoading(false);
       }

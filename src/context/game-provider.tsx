@@ -49,6 +49,12 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
       animateProgress(100)
     } catch (error) {
       console.error('Error al cargar juegos:', error)
+      // Si hay error de autenticación, limpiar sesión
+      if (error instanceof Error && error.message.includes('Invalid Refresh Token')) {
+        await supabase.auth.signOut();
+        localStorage.clear();
+        sessionStorage.clear();
+      }
       animateProgress(100)
     } finally {
       setIsLoading(false)

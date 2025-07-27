@@ -34,6 +34,7 @@ import { submitRating } from "../components/submitRating";
 import { getAverageRating } from "../components/getAverageRating";
 import { useContact } from "../context/ContactContext";
 import GoldenBadge from "../components/ui/golden-batch";
+import { ImageWithRetry } from "../components/image-with-retry";
 import GameYearTriangle from "./ui/GameYearTriangle";
 
 interface GameCardProps {
@@ -84,15 +85,13 @@ export function GameCard({ game, onCardClick, onVote }: GameCardProps) {
  
   
   
-    {game.imageUrl ? (
-      <Image
+        {game.imageUrl ? (
+      <ImageWithRetry
         src={game.imageUrl}
         alt={`Cover art for ${game.title}`}
-        fill
         className="object-cover"
         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
       />
-      
     ) : (
       <div className="w-full h-full bg-gray-200 flex items-center justify-center">
         Imagen no disponible
