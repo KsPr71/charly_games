@@ -132,7 +132,7 @@ export function GameCard({ game, onCardClick, onVote }: GameCardProps) {
           {/* Mostrar estrellas afuera para que no se oculten */}
           <div className="px-4 pb-2">
             <StarRating
-              gameId={game.id}
+              gameId={parseInt(game.id) || 0}
               initialAverage={average} // ← esta SÍ está definida arriba
               onVoteComplete={onVote}
             />

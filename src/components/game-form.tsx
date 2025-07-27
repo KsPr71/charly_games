@@ -502,11 +502,16 @@ export function GameForm({ isOpen, setIsOpen, game }: GameFormProps) {
                                             error.message
                                           );
                                         } else {
-                                          const url = `https://ticudnzjewvqmrgagntg.supabase.co/storage/v1/object/public/game-images/${fileName}`;
-                                          form.setValue("imageUrl", url, {
-                                            shouldValidate: true,
-                                          });
-                                          setPreviewUrl(url);
+                                          const { data: urlData } = supabase.storage
+                                            .from("game-images")
+                                            .getPublicUrl(fileName);
+                                          
+                                          if (urlData?.publicUrl) {
+                                            form.setValue("imageUrl", urlData.publicUrl, {
+                                              shouldValidate: true,
+                                            });
+                                            setPreviewUrl(urlData.publicUrl);
+                                          }
                                         }
                                         setIsUploading(false); // 👈 detiene loader
                                       }
