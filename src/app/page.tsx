@@ -15,6 +15,7 @@ import Image from "next/image";
 import { getTopRatedGames } from "../components/topRated";
 import type { TopRatedGame } from "@/lib/types";
 import WhatsAppFloatingButton from "@/components/ui/botonW";
+import ScrollToTop from "@/components/ui/scroll-to-top";
 import { ContactProvider } from "../context/ContactContext";
 import { useContact } from "../context/ContactContext";
 import { ProgressBar } from "@/components/ui/progress-bar";
@@ -296,6 +297,8 @@ const recentGames = useMemo(() => {
         <div className="fixed bottom-4 right-4 z-50 p-3 md:p-4">
           <WhatsAppFloatingButton />
         </div>
+        
+        <ScrollToTop />
 
         {isLoading ? (
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
