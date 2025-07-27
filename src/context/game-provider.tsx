@@ -156,13 +156,22 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
     setIsLoading(true)
     animateProgress(30)
     try {
+      console.log('Eliminando juego con ID:', id);
       const { error } = await supabase.from('games').delete().eq('id', id)
       animateProgress(80)
-      if (error) throw error
+      if (error) {
+        console.error('Error de Supabase al eliminar:', error);
+        throw error;
+      }
+      
+      console.log('Juego eliminado exitosamente de la base de datos');
+      // Actualizar el estado local después de eliminar
+      setGames(prev => prev.filter(game => game.id !== id))
       animateProgress(100)
     } catch (error) {
       console.error('Error al eliminar juego:', error)
       animateProgress(100)
+      throw error; // Re-lanzar el error para que el componente lo maneje
     } finally {
       setIsLoading(false)
       setTimeout(() => animateProgress(0), 500)

@@ -174,14 +174,21 @@ function AdminPanel() {
   };
 
   const handleDeleteClick = (game: Game) => {
+    console.log('Intentando eliminar juego:', game.title, 'ID:', game.id);
     setGameToDelete(game);
     setIsAlertOpen(true);
   };
 
   const handleDeleteConfirm = async () => {
     if (gameToDelete) {
-      await deleteGame(gameToDelete.id);
-      setGameToDelete(null);
+      try {
+        await deleteGame(gameToDelete.id);
+        setGameToDelete(null);
+        console.log('Juego eliminado exitosamente:', gameToDelete.title);
+      } catch (error) {
+        console.error('Error al eliminar juego:', error);
+        // Aquí podrías mostrar un toast o notificación de error
+      }
     }
     setIsAlertOpen(false);
   };
@@ -399,18 +406,18 @@ function AdminPanel() {
     />
 
     <AlertDialog open={isAlertOpen} onOpenChange={setIsAlertOpen}>
-      <AlertDialogContent className="w-[calc(100vw-2rem)] max-w-md fixed inset-0 m-auto h-fit max-h-[90vh] overflow-auto sm:relative sm:inset-auto sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2">
+      <AlertDialogContent className="max-w-md">
         <AlertDialogHeader>
-          <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
-          <AlertDialogDescription>
-            Esta acción no se puede deshacer. Esto eliminará permanentemente el juego "{gameToDelete?.title}" de tu catálogo.
+          <AlertDialogTitle className="text-lg font-semibold text-gray-900">¿Estás seguro?</AlertDialogTitle>
+          <AlertDialogDescription className="text-gray-600 mt-2">
+            Esta acción no se puede deshacer. Esto eliminará permanentemente el juego <strong>"{gameToDelete?.title}"</strong> de tu catálogo.
           </AlertDialogDescription>
         </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel>Cancelar</AlertDialogCancel>
+        <AlertDialogFooter className="mt-6 flex gap-3">
+          <AlertDialogCancel className="flex-1">Cancelar</AlertDialogCancel>
           <AlertDialogAction
             onClick={handleDeleteConfirm}
-            className="bg-destructive hover:bg-destructive/90"
+            className="flex-1 bg-red-600 hover:bg-red-700 text-white"
           >
             Eliminar
           </AlertDialogAction>
