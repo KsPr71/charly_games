@@ -67,7 +67,7 @@ const recentGames = useMemo(() => {
   };
 
   useEffect(() => {
-    getTopRatedGames(5).then(setTopGames);
+    getTopRatedGames(10).then(setTopGames);
   }, []);
 
   return (
@@ -85,7 +85,7 @@ const recentGames = useMemo(() => {
             alt="Banner principal"
             fill
             className="object-cover object-center lg:object-top opacity-0 transition-opacity duration-1000 delay-300 ease-in-out"
-            onLoadingComplete={(img) => img.classList.remove("opacity-0")}
+            onLoad={(e) => e.currentTarget.classList.remove("opacity-0")}
             priority
           />
 
@@ -96,7 +96,7 @@ const recentGames = useMemo(() => {
             width={200}
             height={200}
             className="absolute top-40 left-1/2 -translate-x-1/2 opacity-0 transition-opacity duration-1000 delay-300 ease-in-out"
-            onLoadingComplete={(img) => img.classList.remove("opacity-0")}
+            onLoad={(e) => e.currentTarget.classList.remove("opacity-0")}
           />
         </div>
         <div className="text-center">
