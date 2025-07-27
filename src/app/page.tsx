@@ -28,6 +28,10 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { Separator } from "@/components/ui/separator";
+import InfiniteScroll from "react-infinite-scroll-component";
+import { fetchGames } from "@/app/utils/supabase/client";
+
+const PAGE_SIZE = 50;
 
 export default function Home() {
   const { games, isLoading,} = useContext(GameContext);
@@ -60,7 +64,7 @@ const recentGames = useMemo(() => {
     );
   }, [games, selectedCategory, searchTerm]);
 
-  const [topGames, setTopGames] = useState([]);
+  const [topGames, setTopGames] = useState<any[]>([]);
 
   const refreshTopRated = () => {
     getTopRatedGames(5).then(setTopGames);
@@ -68,6 +72,22 @@ const recentGames = useMemo(() => {
 
   useEffect(() => {
     getTopRatedGames(10).then(setTopGames);
+  }, []);
+
+  // Estados para infinite scroll
+  const [exploreGames, setExploreGames] = useState<Game[]>([]);
+  const [explorePage, setExplorePage] = useState(0);
+  const [exploreHasMore, setExploreHasMore] = useState(true);
+
+  const loadMoreExploreGames = async () => {
+    const newGames = await fetchGames({ limit: PAGE_SIZE, offset: explorePage * PAGE_SIZE });
+    setExploreGames(prev => [...prev, ...newGames]);
+    setExploreHasMore(newGames.length === PAGE_SIZE);
+    setExplorePage(prev => prev + 1);
+  };
+
+  useEffect(() => {
+    loadMoreExploreGames();
   }, []);
 
   return (
@@ -289,23 +309,30 @@ const recentGames = useMemo(() => {
               </div>
             ))}
           </div>
-        ) : filteredGames.length > 0 ? (
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {filteredGames.map((game) => (
-              <GameCard
-                key={game.id}
-                game={game}
-                onCardClick={() => setSelectedGame(game)}
-                onVote={refreshTopRated}
-              />
-            ))}
-          </div>
         ) : (
-          <div className="flex flex-col items-center justify-center py-20 text-center">
-            <p className="text-xl text-muted-foreground">
-              No se encontraron juegos en esta categoría.
-            </p>
-          </div>
+          <InfiniteScroll
+            dataLength={exploreGames.length}
+            next={loadMoreExploreGames}
+            hasMore={exploreHasMore}
+            loader={<h4 className="text-center py-4">Cargando más juegos...</h4>}
+            endMessage={<p className="text-center py-4 text-muted-foreground">No hay más juegos</p>}
+          >
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {exploreGames
+                .filter((game) =>
+                  (selectedCategory === "Todos" || game.category === selectedCategory) &&
+                  game.title.toLowerCase().includes(searchTerm.toLowerCase())
+                )
+                .map((game, index) => (
+                  <GameCard
+                    key={`explore-${game.id}-${index}`}
+                    game={game}
+                    onCardClick={() => setSelectedGame(game)}
+                    onVote={refreshTopRated}
+                  />
+                ))}
+            </div>
+          </InfiniteScroll>
         )}
       </div>
 

@@ -7,10 +7,14 @@ const supabase = createClient(
 )
 
 
-export async function fetchGames() {
-  const { data, error } = await supabase.from('games').select('*')
-  if (error) throw error
-  return data
+export async function fetchGames({ limit = 50, offset = 0 } = {}) {
+  const { data, error } = await supabase
+    .from('games')
+    .select('*')
+    .order('created_at', { ascending: false })
+    .range(offset, offset + limit - 1);
+  if (error) throw error;
+  return data;
 }
 
 export async function addGame(game) {
