@@ -142,7 +142,7 @@ const recentGames = useMemo(() => {
                animationDuration={2}
                pauseBetweenAnimations={1}
                textColor="white"
-               fontSize="2rem"
+               fontSize="3rem"
              />
            </div>
         </div>
