@@ -19,7 +19,7 @@ import ScrollToTop from "@/components/ui/scroll-to-top";
 import { ContactProvider } from "../context/ContactContext";
 import { useContact } from "../context/ContactContext";
 import { ProgressBar } from "@/components/ui/progress-bar";
-
+import TrueFocus from '@/components/ui/TrueFocus';
 
 import {
   Carousel,
@@ -124,13 +124,27 @@ const recentGames = useMemo(() => {
 
           {/* Imagen encima */}
           <Image
-            src="/logo.png"
+            src="/icon.png"
             alt="Banner encima"
-            width={200}
-            height={200}
-            className="absolute top-40 left-1/2 -translate-x-1/2 opacity-0 transition-opacity duration-1000 delay-300 ease-in-out"
+            width={150}
+            height={150}
+            className="absolute top-35 left-1/2 -translate-x-1/2 opacity-0 transition-opacity duration-1000 delay-300 ease-in-out"
             onLoad={(e) => e.currentTarget.classList.remove("opacity-0")}
           />
+          
+                     {/* TrueFocus en la parte inferior del banner */}
+           <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-10">
+             <TrueFocus 
+               sentence="CHARLY GAMES"
+               manualMode={false}
+               blurAmount={5}
+               borderColor="fuchsia"
+               animationDuration={2}
+               pauseBetweenAnimations={1}
+               textColor="white"
+               fontSize="2rem"
+             />
+           </div>
         </div>
         <div className="text-center">
           <h1 className="mb-4 text-4xl font-bold font-headline py-5">
