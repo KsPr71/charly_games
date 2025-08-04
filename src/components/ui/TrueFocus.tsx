@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
+import Image from "next/image";
 
 interface TrueFocusProps {
     sentence?: string;
@@ -9,6 +10,10 @@ interface TrueFocusProps {
     glowColor?: string;
     textColor?: string;
     fontSize?: string;
+    imageSrc?: string;
+    imageAlt?: string;
+    imageWidth?: number;
+    imageHeight?: number;
     animationDuration?: number;
     pauseBetweenAnimations?: number;
 }
@@ -28,6 +33,10 @@ const TrueFocus: React.FC<TrueFocusProps> = ({
     glowColor = "rgba(0, 255, 0, 0.6)",
     textColor = "black",
     fontSize = "3rem",
+    imageSrc,
+    imageAlt = "Image",
+    imageWidth = 150,
+    imageHeight = 150,
     animationDuration = 0.5,
     pauseBetweenAnimations = 1,
 }) => {
@@ -78,10 +87,22 @@ const TrueFocus: React.FC<TrueFocusProps> = ({
 
     return (
         <div
-            className="relative flex gap-4 justify-center items-center flex-wrap"
+            className="relative flex flex-col gap-4 justify-center items-center"
             ref={containerRef}
         >
-            {words.map((word, index) => {
+            {imageSrc && (
+                <div className="mb-4">
+                    <Image
+                        src={imageSrc}
+                        alt={imageAlt}
+                        width={imageWidth}
+                        height={imageHeight}
+                        className="rounded-lg shadow-lg"
+                    />
+                </div>
+            )}
+            <div className="flex gap-4 justify-center items-center flex-wrap">
+                {words.map((word, index) => {
                 const isActive = index === currentIndex;
                 return (
                     <span
@@ -102,11 +123,12 @@ const TrueFocus: React.FC<TrueFocusProps> = ({
                         } as React.CSSProperties}
                         onMouseEnter={() => handleMouseEnter(index)}
                         onMouseLeave={handleMouseLeave}
-                    >
-                        {word}
-                    </span>
-                );
-            })}
+                                         >
+                         {word}
+                     </span>
+                 );
+             })}
+             </div>
 
             <motion.div
                 className="absolute top-0 left-0 pointer-events-none box-border border-0"

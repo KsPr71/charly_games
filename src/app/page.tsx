@@ -122,29 +122,23 @@ const recentGames = useMemo(() => {
             priority
           />
 
-                     {/* Imagen encima */}
-           <Image
-             src="https://ticudnzjewvqmrgagntg.supabase.co/storage/v1/object/public/datos/icon.png" 
-             alt="Banner encima"
-             width={150}
-             height={150}
-             className="absolute top-40 left-1/2 -translate-x-1/2 opacity-0 transition-opacity duration-1000 delay-300 ease-in-out"
-             onLoad={(e) => e.currentTarget.classList.remove("opacity-0")}
-           />
-           
-                      {/* TrueFocus en la parte inferior del banner */}
-            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10">
-             <TrueFocus 
-               sentence="CHARLY GAMES"
-               manualMode={false}
-               blurAmount={5}
-               borderColor="fuchsia"
-               animationDuration={2}
-               pauseBetweenAnimations={1}
-               textColor="white"
-               fontSize="1.5rem"
-             />
-           </div>
+                                            {/* TrueFocus con imagen en la parte inferior del banner */}
+             <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10">
+              <TrueFocus 
+                sentence="CHARLY GAMES"
+                manualMode={false}
+                blurAmount={5}
+                borderColor="fuchsia"
+                animationDuration={2}
+                pauseBetweenAnimations={1}
+                textColor="white"
+                fontSize="1.5rem"
+                imageSrc="https://ticudnzjewvqmrgagntg.supabase.co/storage/v1/object/public/datos/icon.png"
+                imageAlt="Charly Games Icon"
+                imageWidth={130}
+                imageHeight={130}
+              />
+            </div>
         </div>
         <div className="text-center">
           <h1 className="mb-4 text-4xl font-bold font-headline py-5">
