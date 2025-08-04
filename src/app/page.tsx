@@ -124,7 +124,7 @@ const recentGames = useMemo(() => {
 
           {/* Imagen encima */}
           <Image
-            src="https://ticudnzjewvqmrgagntg.supabase.co/storage/v1/object/public/datos/icon.png"
+            src="https://ticudnzjewvqmrgagntg.supabase.co/storage/v1/object/public/datos/icon.png" 
             alt="Banner encima"
             width={150}
             height={150}
@@ -142,7 +142,7 @@ const recentGames = useMemo(() => {
                animationDuration={2}
                pauseBetweenAnimations={1}
                textColor="white"
-               fontSize="3rem"
+               fontSize="2rem"
              />
            </div>
         </div>
