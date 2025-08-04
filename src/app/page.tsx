@@ -128,7 +128,7 @@ const recentGames = useMemo(() => {
              alt="Banner encima"
              width={150}
              height={150}
-             className="absolute top-30 left-1/2 -translate-x-1/2 opacity-0 transition-opacity duration-1000 delay-300 ease-in-out"
+             className="absolute top-40 left-1/2 -translate-x-1/2 opacity-0 transition-opacity duration-1000 delay-300 ease-in-out"
              onLoad={(e) => e.currentTarget.classList.remove("opacity-0")}
            />
            
@@ -142,7 +142,7 @@ const recentGames = useMemo(() => {
                animationDuration={2}
                pauseBetweenAnimations={1}
                textColor="white"
-               fontSize="1rem"
+               fontSize="1.5rem"
              />
            </div>
         </div>
