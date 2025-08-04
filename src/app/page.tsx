@@ -123,16 +123,16 @@ const recentGames = useMemo(() => {
           />
 
                      {/* Imagen encima */}
-           
-                      {/* TrueFocus en la parte inferior del banner */}
            <Image
              src="https://ticudnzjewvqmrgagntg.supabase.co/storage/v1/object/public/datos/icon.png" 
              alt="Banner encima"
              width={150}
              height={150}
-             className="absolute top-20 left-1/2 -translate-x-1/2 opacity-0 transition-opacity duration-1000 delay-300 ease-in-out"
+             className="absolute top-30 left-1/2 -translate-x-1/2 opacity-0 transition-opacity duration-1000 delay-300 ease-in-out"
              onLoad={(e) => e.currentTarget.classList.remove("opacity-0")}
            />
+           
+                      {/* TrueFocus en la parte inferior del banner */}
             <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10">
              <TrueFocus 
                sentence="CHARLY GAMES"
@@ -142,7 +142,7 @@ const recentGames = useMemo(() => {
                animationDuration={2}
                pauseBetweenAnimations={1}
                textColor="white"
-               fontSize="2rem"
+               fontSize="1rem"
              />
            </div>
         </div>
