@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import Image from "next/image";
+import { ImageWithRetry } from "@/components/image-with-retry";
 
 interface TrueFocusProps {
     sentence?: string;
@@ -91,13 +91,12 @@ const TrueFocus: React.FC<TrueFocusProps> = ({
             ref={containerRef}
         >
             {imageSrc && (
-                <div className="mb-4">
-                    <Image
+                <div className="mb-4 relative" style={{ width: imageWidth, height: imageHeight }}>
+                    <ImageWithRetry
                         src={imageSrc}
                         alt={imageAlt}
-                        width={imageWidth}
-                        height={imageHeight}
                         className="rounded-lg shadow-lg"
+                        sizes="(max-width: 768px) 100vw, 150px"
                     />
                 </div>
             )}
