@@ -40,6 +40,7 @@ export default function Home() {
   const [selectedCategory, setSelectedCategory] = useState<string>("Todos");
   const [selectedGame, setSelectedGame] = useState<Game | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
   const [showSearchInput, setShowSearchInput] = useState(false);
   const { contactInfo, loading } = useContact();
 
@@ -54,16 +55,7 @@ const recentGames = useMemo(() => {
     return ["Todos", ...Array.from(new Set(allCategories))];
   }, [games]);
 
-  const filteredGames = useMemo(() => {
-    const byCategory =
-      selectedCategory === "Todos"
-        ? games
-        : games.filter((game) => game.category === selectedCategory);
 
-    return byCategory.filter((game) =>
-      game.title.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  }, [games, selectedCategory, searchTerm]);
 
   const [topGames, setTopGames] = useState<any[]>([]);
 
@@ -79,29 +71,83 @@ const recentGames = useMemo(() => {
   const [exploreGames, setExploreGames] = useState<Game[]>([]);
   const [explorePage, setExplorePage] = useState(0);
   const [exploreHasMore, setExploreHasMore] = useState(true);
+  const [isSearching, setIsSearching] = useState(false);
+  const exploreGamesRef = useRef<HTMLDivElement>(null);
 
   const loadMoreExploreGames = async () => {
-    const newGames = await fetchGames({ 
-      limit: PAGE_SIZE, 
-      offset: explorePage * PAGE_SIZE,
-      category: selectedCategory 
-    });
-    setExploreGames(prev => [...prev, ...newGames]);
-    setExploreHasMore(newGames.length === PAGE_SIZE);
-    setExplorePage(prev => prev + 1);
+    try {
+      console.log('Loading more games with params:', { 
+        page: explorePage, 
+        category: selectedCategory, 
+        searchTerm: debouncedSearchTerm 
+      });
+      
+      const newGames = await fetchGames({ 
+        limit: PAGE_SIZE, 
+        offset: explorePage * PAGE_SIZE,
+        category: selectedCategory,
+        searchTerm: debouncedSearchTerm
+      });
+      
+      console.log('Received games:', newGames?.length || 0);
+      setExploreGames(prev => [...prev, ...newGames]);
+      setExploreHasMore(newGames.length === PAGE_SIZE);
+      setExplorePage(prev => prev + 1);
+      setIsSearching(false);
+    } catch (error) {
+      console.error('Error loading games:', error);
+      setIsSearching(false);
+    }
+  };
+
+  // Función para hacer scroll al primer resultado
+  const scrollToFirstResult = () => {
+    if (exploreGamesRef.current && exploreGames.length > 0) {
+      // Calcular la posición del elemento con un offset para el header
+      const element = exploreGamesRef.current;
+      const headerHeight = 80; // Altura aproximada del header
+      const elementPosition = element.offsetTop - headerHeight;
+      
+      window.scrollTo({
+        top: elementPosition,
+        behavior: 'smooth'
+      });
+    }
   };
 
   useEffect(() => {
     loadMoreExploreGames();
   }, []);
 
-  // Resetear y cargar nuevos juegos cuando cambie la categoría
+  // Resetear y cargar nuevos juegos cuando cambie la categoría o el término de búsqueda
   useEffect(() => {
+    console.log('Resetting games due to category or search change:', { selectedCategory, debouncedSearchTerm });
     setExploreGames([]);
     setExplorePage(0);
     setExploreHasMore(true);
+    setIsSearching(true);
     loadMoreExploreGames();
-  }, [selectedCategory]);
+  }, [selectedCategory, debouncedSearchTerm]);
+
+  // Hacer scroll al primer resultado cuando se carguen nuevos juegos después de un filtro
+  useEffect(() => {
+    if (exploreGames.length > 0 && (selectedCategory !== "Todos" || debouncedSearchTerm !== "")) {
+      // Pequeño delay para asegurar que el DOM se haya actualizado
+      setTimeout(() => {
+        scrollToFirstResult();
+      }, 200);
+    }
+  }, [exploreGames, selectedCategory, debouncedSearchTerm]);
+
+  // Debounce para el término de búsqueda
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      console.log('Setting debounced search term:', searchTerm);
+      setDebouncedSearchTerm(searchTerm);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -266,6 +312,40 @@ const recentGames = useMemo(() => {
         <h2 className="mb-8 text-3xl font-bold text-center font-headline">
           Explorar todo
         </h2>
+        {isSearching && (
+          <div className="text-center mb-4">
+            <p className="text-muted-foreground">Buscando juegos...</p>
+          </div>
+        )}
+        {/* Referencia para scroll automático */}
+        <div ref={exploreGamesRef} className="scroll-marker" />
+        
+        {/* Indicador de resultados de búsqueda */}
+        {debouncedSearchTerm && exploreGames.length > 0 && (
+          <div className="text-center mb-4 p-3 bg-fuchsia-50 rounded-lg border border-fuchsia-200">
+            <p className="text-fuchsia-700 font-medium">
+              Se encontraron {exploreGames.length} juego{exploreGames.length !== 1 ? 's' : ''} para "{debouncedSearchTerm}"
+            </p>
+          </div>
+        )}
+        
+        {debouncedSearchTerm && exploreGames.length === 0 && !isSearching && (
+          <div className="text-center mb-4 p-3 bg-gray-50 rounded-lg border border-gray-200">
+            <p className="text-gray-600">
+              No se encontraron juegos para "{debouncedSearchTerm}"
+            </p>
+          </div>
+        )}
+        
+        {/* Indicador de resultados por categoría */}
+        {selectedCategory !== "Todos" && exploreGames.length > 0 && !debouncedSearchTerm && (
+          <div className="text-center mb-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+            <p className="text-blue-700 font-medium">
+              Mostrando {exploreGames.length} juego{exploreGames.length !== 1 ? 's' : ''} de la categoría "{selectedCategory}"
+            </p>
+          </div>
+        )}
+        
         <div className="w-full overflow-x-auto">
           <CategoryCarousel
             categories={categories}
@@ -311,6 +391,10 @@ const recentGames = useMemo(() => {
             .animate-bounce-slow {
               animation: bounceSlow 1s infinite;
             }
+
+            .scroll-marker {
+              scroll-margin-top: 100px;
+            }
           `}</style>
         </div>
 
@@ -341,19 +425,14 @@ const recentGames = useMemo(() => {
             endMessage={<p className="text-center py-4 text-muted-foreground">No hay más juegos</p>}
           >
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {exploreGames
-                .filter((game) =>
-                  (selectedCategory === "Todos" || game.category === selectedCategory) &&
-                  game.title.toLowerCase().includes(searchTerm.toLowerCase())
-                )
-                .map((game, index) => (
-                  <GameCard
-                    key={`explore-${game.id}-${index}`}
-                    game={game}
-                    onCardClick={() => setSelectedGame(game)}
-                    onVote={refreshTopRated}
-                  />
-                ))}
+              {exploreGames.map((game, index) => (
+                <GameCard
+                  key={`explore-${game.id}-${index}`}
+                  game={game}
+                  onCardClick={() => setSelectedGame(game)}
+                  onVote={refreshTopRated}
+                />
+              ))}
             </div>
           </InfiniteScroll>
         )}
