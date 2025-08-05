@@ -1,7 +1,7 @@
 "use client";
 
-import Image from "next/image";
 import type { Game } from "@/lib/types";
+import { ImageWithRetry } from "@/components/image-with-retry";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -53,10 +53,9 @@ export function GameDetailsDialog({
         {/* 1. DialogHeader con título (SOLO UNO) */}
         <DialogHeader>
         <div className="relative h-64 w-full sm:h-80">
-          <Image
+          <ImageWithRetry
             src={game.imageUrl}
             alt={`Cover art for ${game.title}`}
-            fill
             className="rounded-t-lg object-cover"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
