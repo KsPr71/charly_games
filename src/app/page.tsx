@@ -20,6 +20,9 @@ import { ContactProvider } from "../context/ContactContext";
 import { useContact } from "../context/ContactContext";
 import { ProgressBar } from "@/components/ui/progress-bar";
 import TrueFocus from '@/components/ui/TrueFocus';
+import { ImageWithRetry } from "@/components/image-with-retry";
+import { SupabaseImage } from "@/components/supabase-image";
+import { GameImage } from "@/components/game-image";
 
 import {
   Carousel,
@@ -260,21 +263,30 @@ const recentGames = useMemo(() => {
               Top Mejor Valorados
             </h2>
             <Carousel opts={{ align: "start", loop: true }} className="w-full">
-              <CarouselContent>
-                {topGames.map((top: any) => (
-                  <CarouselItem
-                    key={(top as any).id}
-                    className="p-2 md:basis-1/2 lg:basis-1/3 xl:basis-1/4"
-                  >
+                             <CarouselContent>
+                                   {topGames.map((top: any) => {
+                   return (
+                     <CarouselItem
+                       key={(top as any).id}
+                       className="p-2 md:basis-1/2 lg:basis-1/3 xl:basis-1/4"
+                     >
                     <div className="bg-white rounded-lg shadow-md p-4 hover:scale-105 transition-transform relative">
                       <div className="relative w-full aspect-[3/2] mb-3 rounded overflow-hidden">
-                        <Image
-                          src={(top as any).image_url}
-                          alt={`Portada de ${(top as any).title}`}
-                          fill
-                          className="object-cover rounded"
-                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                        />
+                        {(top as any).imageUrl || (top as any).image_url ? (
+                          <ImageWithRetry
+                            src={(top as any).imageUrl || (top as any).image_url}
+                            alt={`Portada de ${(top as any).title}`}
+                            className="object-cover rounded"
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                            <div className="text-center">
+                              <div className="text-gray-400 text-3xl mb-2">🎮</div>
+                              <span className="text-gray-500 text-xs font-medium">Sin imagen</span>
+                            </div>
+                          </div>
+                        )}
                       </div>
                       <h3 className="text-lg font-bold text-center">
                         {(top as any).title}
@@ -301,7 +313,8 @@ const recentGames = useMemo(() => {
                       </div>
                     </div>
                   </CarouselItem>
-                ))}
+                 );
+               })}
               </CarouselContent>
               <CarouselPrevious className="hidden sm:flex" />
               <CarouselNext className="hidden sm:flex" />
