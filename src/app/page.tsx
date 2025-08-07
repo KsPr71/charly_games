@@ -34,6 +34,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { fetchGames } from "@/app/utils/supabase/client";
+import { SortButtons, type SortOption } from "@/components/sort-buttons";
 
 const PAGE_SIZE = 50;
 
@@ -45,6 +46,7 @@ export default function Home() {
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
   const [showSearchInput, setShowSearchInput] = useState(false);
+  const [currentSort, setCurrentSort] = useState<SortOption>("default");
   const { contactInfo, loading } = useContact();
 
 const recentGames = useMemo(() => {
@@ -82,14 +84,16 @@ const recentGames = useMemo(() => {
       console.log('Loading more games with params:', { 
         page: explorePage, 
         category: selectedCategory, 
-        searchTerm: debouncedSearchTerm 
+        searchTerm: debouncedSearchTerm,
+        sortBy: currentSort
       });
       
       const newGames = await fetchGames({ 
         limit: PAGE_SIZE, 
         offset: explorePage * PAGE_SIZE,
         category: selectedCategory,
-        searchTerm: debouncedSearchTerm
+        searchTerm: debouncedSearchTerm,
+        sortBy: currentSort
       });
       
       console.log('Received games:', newGames?.length || 0);
@@ -122,15 +126,15 @@ const recentGames = useMemo(() => {
     loadMoreExploreGames();
   }, []);
 
-  // Resetear y cargar nuevos juegos cuando cambie la categoría o el término de búsqueda
+  // Resetear y cargar nuevos juegos cuando cambie la categoría, el término de búsqueda o el ordenamiento
   useEffect(() => {
-    console.log('Resetting games due to category or search change:', { selectedCategory, debouncedSearchTerm });
+    console.log('Resetting games due to category, search or sort change:', { selectedCategory, debouncedSearchTerm, currentSort });
     setExploreGames([]);
     setExplorePage(0);
     setExploreHasMore(true);
     setIsSearching(true);
     loadMoreExploreGames();
-  }, [selectedCategory, debouncedSearchTerm]);
+  }, [selectedCategory, debouncedSearchTerm, currentSort]);
 
   // Hacer scroll al primer resultado cuando se carguen nuevos juegos después de un filtro
   useEffect(() => {
@@ -364,6 +368,14 @@ const recentGames = useMemo(() => {
             categories={categories}
             selectedCategory={selectedCategory}
             onSelectCategory={setSelectedCategory}
+          />
+        </div>
+
+        {/* Componente de ordenamiento */}
+        <div className="mt-6 mb-4">
+          <SortButtons
+            currentSort={currentSort}
+            onSortChange={setCurrentSort}
           />
         </div>
         <div className="fixed top-20 right-6 z-50 flex items-center">

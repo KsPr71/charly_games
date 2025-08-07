@@ -7,11 +7,32 @@ const supabase = createClient(
 )
 
 
-export async function fetchGames({ limit = 50, offset = 0, category = null, searchTerm = "" }: { limit?: number; offset?: number; category?: string | null; searchTerm?: string } = {}) {
+export async function fetchGames({ limit = 50, offset = 0, category = null, searchTerm = "", sortBy = "default" }: { limit?: number; offset?: number; category?: string | null; searchTerm?: string; sortBy?: string } = {}) {
   let query = supabase
     .from('games')
-    .select('*')
-    .order('created_at', { ascending: false });
+    .select('*');
+  
+  // Aplicar ordenamiento según el criterio seleccionado
+  switch (sortBy) {
+    case "alphabetical":
+      query = query.order('title', { ascending: true });
+      break;
+    case "release_asc":
+      query = query.order('created_at', { ascending: true });
+      break;
+    case "release_desc":
+      query = query.order('created_at', { ascending: false });
+      break;
+    case "year_asc":
+      query = query.order('year', { ascending: true });
+      break;
+    case "year_desc":
+      query = query.order('year', { ascending: false });
+      break;
+    default:
+      query = query.order('created_at', { ascending: false });
+      break;
+  }
   
   if (category && category !== 'Todos') {
     query = query.eq('category', category);
@@ -21,7 +42,7 @@ export async function fetchGames({ limit = 50, offset = 0, category = null, sear
     query = query.ilike('title', `%${searchTerm}%`);
   }
   
-  console.log('Fetching games with params:', { limit, offset, category, searchTerm });
+  console.log('Fetching games with params:', { limit, offset, category, searchTerm, sortBy });
   
   const { data, error } = await query.range(offset, offset + limit - 1);
   if (error) {
