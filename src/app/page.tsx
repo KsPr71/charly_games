@@ -34,7 +34,8 @@ import {
 import { Separator } from "@/components/ui/separator";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { fetchGames } from "@/app/utils/supabase/client";
-import { SortButtons, type SortOption } from "@/components/sort-buttons";
+import { SortButtonsAccordion } from "@/components/sort-buttons-accordion";
+import { type SortOption } from "@/components/sort-buttons";
 
 const PAGE_SIZE = 50;
 
@@ -372,12 +373,10 @@ const recentGames = useMemo(() => {
         </div>
 
         {/* Componente de ordenamiento */}
-        <div className="mt-6 mb-4">
-          <SortButtons
-            currentSort={currentSort}
-            onSortChange={setCurrentSort}
-          />
-        </div>
+        <SortButtonsAccordion
+          currentSort={currentSort}
+          onSortChange={setCurrentSort}
+        />
         <div className="fixed top-20 right-6 z-50 flex items-center">
           {/* Botón redondo con lupa */}
           <button

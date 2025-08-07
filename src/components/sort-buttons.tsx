@@ -12,8 +12,8 @@ interface SortButtonsProps {
 
 export function SortButtons({ currentSort, onSortChange }: SortButtonsProps) {
   return (
-    <div className="mb-6 p-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl border border-purple-100 shadow-sm">
-      <div className="text-sm font-bold text-purple-700 mb-4 flex items-center gap-2">
+    <div className="space-y-4">
+      <div className="text-sm font-bold text-purple-700 flex items-center gap-2">
         <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse"></div>
         Ordenar por:
       </div>
